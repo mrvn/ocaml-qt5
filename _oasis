@@ -25,15 +25,15 @@ Library QT5
   BuildDepends: ctypes.foreign
   CompiledObject: best
 
-Executable test
+Executable test_app
   Path: src/test
   BuildDepends: QT5
-  MainIs: test.ml
+  MainIs: app.ml
   CompiledObject: best
 
-Test test
-  Command: test
-  TestTools: test
+Test app_test
+  Command: $test_app
+  TestTools: test_app
   Run: true
 
 SourceRepository head
