@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 662811b732d4b843a7568be082b27c20) *)
+(* DO NOT EDIT (digest: e00523d3be755b12999832da693323a6) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -646,14 +646,34 @@ let package_default =
                       A "-cclib";
                       A "-lQt5Gui";
                       A "-cclib";
-                      A "-lQt5Core"
+                      A "-lQt5Core";
+                      A "-cclib";
+                      A "-lstdc++"
                    ])
             ]);
           (["oasis_library_qt5_cclib"; "ocamlmklib"; "c"],
             [
                (OASISExpr.EBool true,
-                 S [A "-lQt5Widgets"; A "-lQt5Gui"; A "-lQt5Core"])
-            ])
+                 S
+                   [
+                      A "-lQt5Widgets";
+                      A "-lQt5Gui";
+                      A "-lQt5Core";
+                      A "-lstdc++"
+                   ])
+            ]);
+          (["oasis_library_qt5_byte"; "ocaml"; "link"; "byte"],
+            [(OASISExpr.EBool true, S [A "-cc"; A "g++"])]);
+          (["oasis_library_qt5_native"; "ocaml"; "link"; "native"],
+            [(OASISExpr.EBool true, S [A "-cc"; A "g++"])]);
+          (["oasis_library_qt5_byte"; "ocaml"; "ocamldep"; "byte"],
+            [(OASISExpr.EBool true, S [A "-cc"; A "g++"])]);
+          (["oasis_library_qt5_native"; "ocaml"; "ocamldep"; "native"],
+            [(OASISExpr.EBool true, S [A "-cc"; A "g++"])]);
+          (["oasis_library_qt5_byte"; "ocaml"; "compile"; "byte"],
+            [(OASISExpr.EBool true, S [A "-cc"; A "g++"])]);
+          (["oasis_library_qt5_native"; "ocaml"; "compile"; "native"],
+            [(OASISExpr.EBool true, S [A "-cc"; A "g++"])])
        ];
      includes =
        [
@@ -668,7 +688,7 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 672 "myocamlbuild.ml"
+# 692 "myocamlbuild.ml"
 (* OASIS_STOP *)
 Ocamlbuild_plugin.dispatch dispatch_default;;
 mark_tag_used "tests";;

@@ -1,27 +1,18 @@
-open Ctypes
-open Foreign
-
 type t
-let t : t structure typ = structure "QApplication"
 
-let create =
-  foreign "qApplication_constructor" (void @-> returning (ptr t))
-let destroy =
-  foreign "qApplication_destructor" (ptr t @-> returning void)
-let exec =
-  foreign "qApplicaion_exec" (ptr t @-> returning int)
+external create : unit -> t = "qApplication_constructor"
+external destroy : t -> unit = "qApplication_destructor"
+external exec : t -> int = "qApplication_exec"
 
 class virtual qObject =
 object
 end
 
 class qApplication =
-object
+object(self)
   inherit qObject
-  val this = create ()
+  val this = Printf.printf "qApplication create\n%!"; create ()
   method exec = exec this
-  initializer Gc.finalise destroy this
+  method destroy = destroy this
+  initializer Gc.finalise (fun t -> t#destroy) self
 end
-
-let app = new qApplication
-let () = Printf.printf "foo\n%!"
