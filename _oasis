@@ -1,0 +1,42 @@
+OASISFormat: 0.4
+Name: ocaml-qt5
+Version: 0.0
+Synopsis: ocaml bindings for QT5 widgets
+Description: ocaml bindings to QT5 widgets
+Authors: Goswin von Brederlow <goswin-v-b@web.de>
+Copyrights: (C) 2015 Goswin von Brederlow <goswin-v-b@web.de>
+License: LGPL
+Homepage: htps://github.com/mrvn/ocaml-qt5
+Plugins: META (0.4), StdFiles (0.4), DevFiles (0.4)
+BuildTools: ocamlbuild
+
+Library QT5
+  Path: src/qt5
+  Build: true
+  Install: true
+  Pack: true
+  Modules: src/QApplication, src/QWidget, src/QMainWindow
+  CSources: src/QApplication_stubs.c
+# pkg-config --cflags Qt5Widgets
+  CCOpt: -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5 -x c++ -std=gnu++14
+# pkg-config --libs Qt5Widgets
+  CCLib: -lQt5Widgets -lQt5Gui -lQt5Core 
+  FindlibName: QT5
+  BuildDepends: ctypes.foreign
+  CompiledObject: best
+
+Executable test
+  Path: src/test
+  BuildDepends: QT5
+  MainIs: test.ml
+  CompiledObject: best
+
+Test test
+  Command: test
+  TestTools: test
+  Run: true
+
+SourceRepository head
+  Type: git
+  Location: htps://github.com/mrvn/ocaml-qt5
+  Browser: htps://github.com/mrvn/ocaml-qt5
