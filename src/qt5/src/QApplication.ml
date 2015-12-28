@@ -5,26 +5,17 @@ object
 end
 
 type t = qApplication_type QObject.ptr
-type a
-type b
-type r = {
-  app : t;
-  argc : a;
-  argv : b;
-}
 
-external create : string array -> r = "qApplication_constructor"
-external destroy : r -> unit = "qApplication_destructor"
+external create : StringArray.t -> t = "qApplication_constructor"
 external exec : t -> int = "qApplication_exec"
 
 class qApplication argv =
-  let r_init = create argv
+  let argv_init = StringArray.create argv
   in
 object
-  val r = r_init
-  inherit QObject.qObject r_init.app
+  val argv = argv_init
+  inherit QObject.qObject (create argv_init)
   method exec = exec this
-  method destroy = destroy r
 end
 
 let () = at_exit Gc.full_major
