@@ -1,4 +1,10 @@
-type t
+class type qApplication_type =
+object
+  inherit QObject.qObject_type
+  method exec : int
+end
+
+type t = qApplication_type QObject.ptr
 type a
 type b
 type r = {
@@ -11,17 +17,14 @@ external create : string array -> r = "qApplication_constructor"
 external destroy : r -> unit = "qApplication_destructor"
 external exec : t -> int = "qApplication_exec"
 
-class virtual qObject =
+class qApplication argv =
+  let r_init = create argv
+  in
 object
-end
-
-class qApplication ?(args = Sys.argv) () =
-object(self)
-  inherit qObject
-  val this = Printf.printf "qApplication create\n%!"; create args
-  method exec = exec this.app
-(*  method destroy = destroy this
-*)  initializer Gc.finalise destroy this
+  val r = r_init
+  inherit QObject.qObject r_init.app
+  method exec = exec this
+  method destroy = destroy r
 end
 
 let () = at_exit Gc.full_major
