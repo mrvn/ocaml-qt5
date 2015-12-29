@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: e00523d3be755b12999832da693323a6) *)
+(* DO NOT EDIT (digest: 65a22820b55ae99a3a2dda5a996012d1) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -608,7 +608,7 @@ open Ocamlbuild_plugin;;
 let package_default =
   {
      MyOCamlbuildBase.lib_ocaml = [("QT5", ["src/qt5"; "src/qt5/src"], [])];
-     lib_c = [("QT5", "src/qt5", [])];
+     lib_c = [("QT5", "src/qt5", ["src/qt5/src/Proxy_stubs.h"])];
      flags =
        [
           (["oasis_library_qt5_ccopt"; "compile"],

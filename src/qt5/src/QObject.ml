@@ -1,18 +1,13 @@
-type 'a ptr
-
-class type qObject_type =
-object('self)
-  val this : #qObject_type ptr
-  method destroy : unit
+class virtual qObject' = object(self : 'self)
+(*
+  method virtual call : 'b 'c . (('self, 'b) Proxy.fn -> 'c) -> 'b -> 'c
+*)
 end
 
-external destroy : #qObject_type ptr -> unit = "qObject_destructor"
-
-class qObject obj =
-  (object(self)
-    val this = obj
-    method destroy =
-      Printf.printf "qObject#destroy\n%!";
-      destroy this
-    initializer Gc.finalise (fun t -> t#destroy) self
-   end : qObject_type)
+class qObject proxy = object(self : 'self)
+  inherit qObject'
+  val proxy = proxy
+(*
+  method call fn = Proxy.call proxy fn
+*)
+end

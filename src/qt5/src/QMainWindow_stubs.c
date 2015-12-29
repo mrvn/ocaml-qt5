@@ -4,29 +4,22 @@
 #include <features.h>
 #include <stdio.h>
 
+#include "Proxy_stubs.h"
+
 __BEGIN_DECLS
 
-value qMainWindow_constructor() {
+value caml_mrvn_QT5_QMainWindow_create() {
   CAMLparam0();
-  CAMLlocal1(win);
-  win = (value)new QMainWindow();
-  fprintf(stderr, "QMainWindow::QMainWindow() @ %p\n", (QMainWindow*)win);
-  CAMLreturn(win);
+  QMainWindow *win = new QMainWindow();
+  fprintf(stderr, "QMainWindow::QMainWindow() @ %p\n", win);
+  CAMLreturn(Proxy<QMainWindow>::create(win));
 }
 
-void qMainWindow_show(value ml_win) {
-  CAMLparam1(ml_win);
-  QMainWindow *win = (QMainWindow *)ml_win;
-  fprintf(stderr, "QMainWindow::show() @ %p\n", win);
-  win->show();
-  CAMLreturn0;
-}
-
-void qMainWindow_destructor(value ml_win) {
-  CAMLparam1(ml_win);
-  QMainWindow *win = (QMainWindow *)ml_win;
-  fprintf(stderr, "QMainWindow::~QMainWindow() @ %p\n", win);
-  delete win;
+void caml_mrvn_QT5_QMainWindow_show(value ml_proxy) {
+  CAMLparam1(ml_proxy);
+  fprintf(stderr, "%s(%lu)\n", __PRETTY_FUNCTION__, ml_proxy);
+  Proxy<QMainWindow> *proxy = (Proxy<QMainWindow> *)Data_custom_val(ml_proxy);
+  proxy->call<void>(&QMainWindow::show);
   CAMLreturn0;
 }
 

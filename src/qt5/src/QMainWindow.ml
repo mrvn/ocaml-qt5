@@ -1,15 +1,14 @@
-class type qMainWindow_type =
+class virtual qMainWindow' =
 object
-  inherit QWidget.qWidget_type
+  inherit QWidget.qWidget'
 end
 
-type t = qMainWindow_type QObject.ptr
-external create : unit -> t = "qMainWindow_constructor"
-external destroy : t -> unit = "qMainWindow_destructor"
-external show : t -> unit = "qMainWindow_show"
+external create : unit -> qMainWindow' Proxy.t = "caml_mrvn_QT5_QMainWindow_create"
+external show : qMainWindow' Proxy.t -> unit = "caml_mrvn_QT5_QMainWindow_show"
 
 class qMainWindow =
 object(self)
+  inherit qMainWindow'
   inherit QWidget.qWidget (create ())
-  method show = show this
+  method show = show proxy
 end

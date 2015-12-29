@@ -1,9 +1,8 @@
-class type qWidget_type =
-object
-  inherit QObject.qObject_type
+class virtual qWidget' = object
+  inherit QObject.qObject'
 end
 
-class qWidget obj =
-object
-  inherit QObject.qObject obj
+class qWidget proxy = object
+  inherit qWidget'
+  inherit QObject.qObject proxy
 end

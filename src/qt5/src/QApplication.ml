@@ -1,21 +1,19 @@
-class type qApplication_type =
+class virtual qApplication' =
 object
-  inherit QObject.qObject_type
-  method exec : int
+  inherit QObject.qObject'
+  method virtual exec : int
 end
 
-type t = qApplication_type QObject.ptr
-
-external create : StringArray.t -> t = "qApplication_constructor"
-external exec : t -> int = "qApplication_exec"
+external create : StringArray.t -> qApplication' Proxy.t = "caml_mrvn_QT5_QApplication_create"
+external exec : unit -> int = "caml_mrvn_QT5_QApplication_exec"
 
 class qApplication argv =
   let argv_init = StringArray.create argv
   in
-object
+object(self)
   val argv = argv_init
   inherit QObject.qObject (create argv_init)
-  method exec = exec this
+  method exec = exec ()
 end
 
 let () = at_exit Gc.full_major
