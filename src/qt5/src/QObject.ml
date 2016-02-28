@@ -1,13 +1,12 @@
 class virtual qObject' = object(self : 'self)
-(*
-  method virtual call : 'b 'c . (('self, 'b) Proxy.fn -> 'c) -> 'b -> 'c
-*)
 end
 
-class qObject proxy = object(self : 'self)
+class ['a] qObject (proxy : 'a Proxy.t) = object(self : 'self)
   inherit qObject'
   val proxy = proxy
-(*
-  method call fn = Proxy.call proxy fn
-*)
+  method proxy = proxy
+  method connect : 'b . ('a, 'b) Signal.t -> 'b -> 'b Connection.t
+    = fun signal fn -> Signal.connect proxy signal fn
+  method disconnect : 'b . 'b Connection.t -> unit
+    = fun con -> Connection.disconnect con
 end

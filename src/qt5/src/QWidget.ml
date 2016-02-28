@@ -2,7 +2,7 @@ class virtual qWidget' = object
   inherit QObject.qObject'
 end
 
-class qWidget proxy = object
+class ['a] qWidget proxy = object
   inherit qWidget'
-  inherit QObject.qObject proxy
+  inherit ['a] QObject.qObject proxy
 end

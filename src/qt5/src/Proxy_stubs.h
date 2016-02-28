@@ -36,7 +36,31 @@ public:
       // FIXME: throw exception
       assert(false);
     }
-    return obj_->*fn(arg);
+    return (obj_->*fn)(arg);
+  }
+  template<typename A>
+  void call(void (Q::*fn)(A arg), A arg) {
+    if (obj_ == nullptr) {
+      // FIXME: throw exception
+      assert(false);
+    }
+    (obj_->*fn)(arg);
+  }
+  template<typename T, typename A>
+  T call(T (Q::*fn)(A arg) const, A arg) const {
+    if (obj_ == nullptr) {
+      // FIXME: throw exception
+      assert(false);
+    }
+    return (obj_->*fn)(arg);
+  }
+  template<typename A>
+  void call(void (Q::*fn)(A arg) const, A arg) const {
+    if (obj_ == nullptr) {
+      // FIXME: throw exception
+      assert(false);
+    }
+    (obj_->*fn)(arg);
   }
   template<typename T>
   T call(T (Q::*fn)()) {
@@ -46,6 +70,45 @@ public:
     }
     fprintf(stderr, "%s: %p->(%p)\n", __PRETTY_FUNCTION__, obj_, (void*)fn);
     return (obj_->*fn)();
+  }
+  void call(void (Q::*fn)()) {
+    if (obj_ == nullptr) {
+      // FIXME: throw exception
+      assert(false);
+    }
+    fprintf(stderr, "%s: %p->(%p)\n", __PRETTY_FUNCTION__, obj_, (void*)fn);
+    (obj_->*fn)();
+  }
+  template<typename T>
+  T call(T (Q::*fn)() const) const {
+    if (obj_ == nullptr) {
+      // FIXME: throw exception
+      assert(false);
+    }
+    fprintf(stderr, "%s: %p->(%p)\n", __PRETTY_FUNCTION__, obj_, (void*)fn);
+    return (obj_->*fn)();
+  }
+  void call(void (Q::*fn)() const) const {
+    if (obj_ == nullptr) {
+      // FIXME: throw exception
+      assert(false);
+    }
+    fprintf(stderr, "%s: %p->(%p)\n", __PRETTY_FUNCTION__, obj_, (void*)fn);
+    (obj_->*fn)();
+  }
+  Q * obj() {
+    if (obj_ == nullptr) {
+      // FIXME: throw exception
+      assert(false);
+    }
+    return obj_;
+  }
+  const Q * obj() const {
+    if (obj_ == nullptr) {
+      // FIXME: throw exception
+      assert(false);
+    }
+    return obj_;
   }
   static value create(Q *obj, bool shared = false) {
     fprintf(stderr, "Creating proxy for %p\n", obj);
@@ -64,7 +127,6 @@ public:
       return res;
     }
   }
-
 private:
   void obj_destroyed(QObject *obj = nullptr) {
     fprintf(stderr, "%p->%s(%p)\n", this, __PRETTY_FUNCTION__, obj);
