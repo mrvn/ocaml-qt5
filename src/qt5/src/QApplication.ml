@@ -16,4 +16,8 @@ object(self)
   method exec = exec ()
 end
 
+(* show backtraces on failure *)
+let () = Printexc.record_backtrace true
+
+(* free all resources at exit *)
 let () = at_exit Gc.full_major
