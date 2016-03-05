@@ -1,48 +1,51 @@
-class ['a] oMainWindow proxy = object
-  inherit ['a] OWidget.oWidget proxy
-    (*
-  method show = show proxy
-  method centralWidget =
-    let proxy = centralWidget proxy
+module rec E : sig
+  val make : unit -> C.t Proxy.t
+  val show : 'a C.oMainWindow Proxy.t -> unit
+  val centralWidget : 'a C.oMainWindow Proxy.t -> 'b OWidget.oWidget Proxy.t
+  val setCentralWidget : 'a C.oMainWindow Proxy.t -> 'b OWidget.oWidget Proxy.t -> unit
+end = struct
+  external make : unit -> C.t Proxy.t
+    = "caml_mrvn_QT5_OMainWindow_make"
+  external show : 'a C.oMainWindow Proxy.t -> unit
+    = "caml_mrvn_QT5_OMainWindow_show"
+  external centralWidget : 'a C.oMainWindow Proxy.t -> 'b OWidget.oWidget Proxy.t
+    = "caml_mrvn_QT5_OMainWindow_centralWidget"
+  external setCentralWidget : 'a C.oMainWindow Proxy.t -> 'b OWidget.oWidget Proxy.t -> unit
+    = "caml_mrvn_QT5_OMainWindow_setCentralWidget"
+end
+and C : sig
+  class ['a] oMainWindow : 'a Proxy.t -> object
+    constraint 'a = 'b oMainWindow as 'a
+    inherit ['a] OWidget.oWidget
+    method show : unit
+    method centralWidget : 'c . 'c OWidget.oWidget OWidget.oWidget
+    method setCentralWidget : 'd . 'd OWidget.oWidget OWidget.oWidget -> unit
+  end
+
+  type t = ('a oMainWindow as 'a) oMainWindow
+
+  val make : unit -> 'a oMainWindow
+end = struct
+  class ['a] oMainWindow proxy = object
+    constraint 'a = 'b oMainWindow as 'a
+    inherit ['a] OWidget.oWidget proxy
+    method show = E.show proxy
+    method centralWidget : 'c . 'c OWidget.oWidget OWidget.oWidget =
+      let widget_proxy = E.centralWidget proxy
+      in
+      new OWidget.oWidget widget_proxy
+    method setCentralWidget : 'd . 'd OWidget.oWidget OWidget.oWidget -> unit = fun w ->
+      let widget_proxy = w#proxy
+      in
+      E.setCentralWidget proxy widget_proxy
+  end
+
+  type t = ('a oMainWindow as 'a) oMainWindow
+
+  let make () =
+    let proxy = E.make ()
     in
-    new QWidget.qWidget proxy
-  method setCentralWidget : 'b 'c . ((#QWidget.qWidget' as 'b) #QWidget.qWidget as 'c) -> unit = fun w ->
-    let proxy_w = w#proxy
-    in
-    setCentralWidget proxy proxy_w
-    *)
+    new oMainWindow proxy
 end
 
-external make : unit -> 'a oMainWindow Proxy.t
-  = "caml_mrvn_QT5_OMainWindow_make"
-
-let make () =
-  let proxy = make ()
-  in
-  new oMainWindow proxy
-
-external show : 'a oMainWindow Proxy.t -> unit
-  = "caml_mrvn_QT5_OMainWindow_show"
-
-let show win =
-  let win = win#proxy
-  in
-  show win
-
-external centralWidget : 'a oMainWindow Proxy.t -> 'b OWidget.oWidget Proxy.t
-  = "caml_mrvn_QT5_OMainWindow_centralWidget"
-
-let centralWidget win =
-  let win = win#proxy in
-  let proxy = centralWidget win
-  in
-  new OWidget.oWidget proxy
-
-external setCentralWidget : 'a oMainWindow Proxy.t -> 'b OWidget.oWidget Proxy.t -> unit
-  = "caml_mrvn_QT5_OMainWindow_setCentralWidget"
-
-let setCentralWidget win w =
-  let win = win#proxy in
-  let w = w#proxy
-  in
-  setCentralWidget win w
+include C

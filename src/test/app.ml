@@ -8,8 +8,8 @@ let res =
       (QT5.OAbstractButton.clicked ())
       (fun checked -> Printf.printf "button clicked (ocaml)\n%!")
   in
-  QT5.OMainWindow.setCentralWidget win b;
-  QT5.OMainWindow.show win;
+  win#setCentralWidget b;
+  win#show;
   let res = a#exec
   in
   b#disconnect connection;
