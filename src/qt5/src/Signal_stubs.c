@@ -1,7 +1,11 @@
-#include "Signal_stubs.h"
-#include "Proxy_stubs.h"
-#include "Connection_stubs.h"
+#include <QObject>
+
 #include <caml/memory.h>
+
+#include "Signal.h"
+#include "Proxy.h"
+#include "Connection.h"
+#include "OObject.h"
 
 char caml_mrvn_QT5_Signal_identifier[] = "mrvn.caml.QT5.Signal";
 
@@ -20,8 +24,6 @@ struct custom_operations caml_mrvn_QT5_Signal_custom_ops = {
     custom_compare_ext_default,
   };
 
-class Q;
-
 /*
 external connect :
   'a Proxy.t -> ('a, 'b) t -> 'b -> 'b Connection.t
@@ -30,15 +32,14 @@ external connect :
 extern "C"
 value caml_mrvn_QT5_Signal_connect(value ml_proxy, value ml_signal, value ml_fn) {
   CAMLparam3(ml_proxy, ml_signal, ml_fn);
-  fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
-  Proxy<Q> *proxy = (Proxy<Q> *)Data_custom_val(ml_proxy);
+  fprintf(stderr, "%s(ml_proxy = 0x%lx, ml_signal = 0x%lx, ml_fn = 0x%lx)\n", __PRETTY_FUNCTION__, ml_proxy, ml_signal, ml_fn);
+  Proxy<OObject<QObject> > *proxy = (Proxy<OObject<QObject> > *)Data_custom_val(ml_proxy);
   fprintf(stderr, "%s: proxy = %p\n", __PRETTY_FUNCTION__, proxy);
-  Q *obj = proxy->obj();
+  OObject<QObject> *obj = proxy->obj();
   fprintf(stderr, "%s: obj = %p\n", __PRETTY_FUNCTION__, obj);
   SignalBase *signal = (SignalBase *)ml_signal;
   fprintf(stderr, "%s: signal = %p\n", __PRETTY_FUNCTION__, signal);
   QMetaObject::Connection con(signal->connect(obj, ml_fn));
   fprintf(stderr, "%s: got con\n", __PRETTY_FUNCTION__);
-  CAMLreturn(make(con, ml_fn));
+  CAMLreturn(Connection::make(con));
 }
-

@@ -1,15 +1,15 @@
 let res =
-  Printf.printf "QApplication test\n%!";
-  let a = new QT5.QApplication.qApplication Sys.argv in
-  let win = new QT5.QMainWindow.qMainWindow in
-  let b = QT5.QPushButton.make "push" in
+  Printf.printf "OApplication test\n%!";
+  let a = QT5.OApplication.make Sys.argv in
+  let win = QT5.OMainWindow.make () in
+  let b = QT5.OPushButton.make "push" in
   let connection =
     b#connect
-      b#clicked
+      (QT5.OAbstractButton.clicked ())
       (fun checked -> Printf.printf "button clicked (ocaml)\n%!")
   in
-  win#setCentralWidget b;
-  win#show;
+  QT5.OMainWindow.setCentralWidget win b;
+  QT5.OMainWindow.show win;
   let res = a#exec
   in
   b#disconnect connection;

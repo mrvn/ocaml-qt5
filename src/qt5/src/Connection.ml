@@ -1,9 +1,4 @@
-type qtCon
+type t
 
-type 'a t = {
-  qtCon : qtCon;
-  fn : 'a;
-}
-
-external disconnect : 'a t -> unit
+external disconnect : t -> unit
   = "caml_mrvn_QT5_Connection_disconnect"
