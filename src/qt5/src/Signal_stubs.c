@@ -43,3 +43,15 @@ value caml_mrvn_QT5_Signal_connect(value ml_proxy, value ml_signal, value ml_fn)
   fprintf(stderr, "%s: got con\n", __PRETTY_FUNCTION__);
   CAMLreturn(Connection::make(con));
 }
+
+void call2(value closure, bool arg) {
+    CAMLparam1(closure);
+    CAMLlocal1(res);
+    res = caml_callback_exn(closure, Val_int(arg));
+    if(Is_exception_result(res)) {
+        res = Extract_exception(res);
+	fprintf(stderr, "callback got exception 0x%ld\n", res);
+    }
+    CAMLreturn0;
+}
+
