@@ -1,12 +1,19 @@
+class virtual oApplication' = object(self)
+  inherit OObject.oObject'
+  method as_oApplication = (self :> oApplication')
+end
+
+type t = oApplication' Proxy.t
+
 external exec : unit -> int = "caml_mrvn_QT5_OApplication_exec"
 
-class ['a] oApplication proxy =
-object
-  inherit ['a] OObject.oObject proxy
+class oApplication proxy = object
+  inherit oApplication'
+  inherit OObject.oObject proxy
   method exec = exec ()
 end
 
-external make : string array -> 'a oApplication Proxy.t
+external make : string array -> oApplication Proxy.t
   = "caml_mrvn_QT5_OApplication_make"
 
 let make args =

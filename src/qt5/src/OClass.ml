@@ -1,6 +1,13 @@
 exception Destroyed
 
-class ['a] oClass (proxy : 'a Proxy.t) = object(self : 'self)
-  val proxy = proxy
+class virtual oClass' = object(self : 'self)
+  method virtual proxy : 'self Proxy.t
+  method as_oClass = (self :> oClass')
+end
+
+type t = oClass' Proxy.t
+
+class oClass proxy = object
+  inherit oClass'
   method proxy = proxy
 end

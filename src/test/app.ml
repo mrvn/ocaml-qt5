@@ -4,8 +4,7 @@ let res =
   let win = QT5.OMainWindow.make () in
   let b = QT5.OPushButton.make "push" in
   let connection =
-    b#connect
-      (QT5.OAbstractButton.clicked ())
+    b#clicked#connect
       (fun checked -> Printf.printf "button clicked (ocaml)\n%!")
   in
   win#setCentralWidget b;
