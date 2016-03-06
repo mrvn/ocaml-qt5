@@ -5,6 +5,8 @@ end
 
 type t = oObject' Proxy.t
 
+external handler_event : unit -> (oObject', OEvent.t -> bool) EventHandler.t = "caml_mrvn_QT5_OObject_QObject_handler_event"
+
 class oObject proxy = object(self:'self)
   inherit oObject'
   inherit OClass.oClass proxy
@@ -12,4 +14,6 @@ class oObject proxy = object(self:'self)
     = fun signal fn -> Signal.connect proxy signal fn
   method disconnect : Connection.t -> unit
     = fun con -> Connection.disconnect con
+  method handler_event =
+    new EventHandler.eventHandler self#as_oObject#proxy (handler_event ())
 end

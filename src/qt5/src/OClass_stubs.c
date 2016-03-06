@@ -36,7 +36,7 @@ void OClass::incr(size_t amount) {
     if (ref_count_ == 0) {
 	fprintf(stderr, " ### registering root ###");
 	// caml_register_generational_global_root(&proxy_);
-	caml_register_global_root(&proxy_);
+	caml_register_generational_global_root(&proxy_);
     }
     ref_count_ += amount;
     fprintf(stderr, " = %zu\n", ref_count_);
@@ -49,7 +49,7 @@ void OClass::decr(size_t amount) {
     if (ref_count_ == 0) {
 	fprintf(stderr, " ### removing root ###");
 	// caml_remove_generational_global_root(&proxy_);
-	caml_remove_global_root(&proxy_);
+	caml_remove_generational_global_root(&proxy_);
     }
     fprintf(stderr, " = %zu\n", ref_count_);
 }

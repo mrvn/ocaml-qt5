@@ -47,10 +47,10 @@ value caml_mrvn_QT5_Signal_connect(value ml_proxy, value ml_signal, value ml_fn)
 void call2(value closure, bool arg) {
     CAMLparam1(closure);
     CAMLlocal1(res);
-    res = caml_callback_exn(closure, Val_int(arg));
+    res = caml_callback_exn(closure, Val_bool(arg));
     if(Is_exception_result(res)) {
         res = Extract_exception(res);
-	fprintf(stderr, "callback got exception 0x%ld\n", res);
+	fprintf(stderr, "%s: callback got exception 0x%ld\n", __PRETTY_FUNCTION__, res);
     }
     CAMLreturn0;
 }

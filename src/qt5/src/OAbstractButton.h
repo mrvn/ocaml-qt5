@@ -1,6 +1,7 @@
 #ifndef MRVN_QT5_OABSTRACTBUTTON_H
 #define MRVN_QT5_OABSTRACTBUTTON_H
 
+#include <QAbstractButton>
 #include <stdio.h>
 
 #include "OWidget.h"
@@ -15,7 +16,11 @@ public:
     virtual ~OAbstractButton() {
 	fprintf(stderr, "%p <0x%lx>->%s()\n", this, OWidget<Q>::proxy(), __PRETTY_FUNCTION__);
     }
-private:
+    virtual void keyPressEvent(QKeyEvent * event) {
+	fprintf(stderr, "%p <0x%lx>->%s(%p)\n", this, OWidget<Q>::proxy(), __PRETTY_FUNCTION__, event);
+	Q::keyPressEvent(event);
+    }
+    private:
 };
 
 #endif // #ifndef MRVN_QT5_OABSTRACTBUTTON_H
