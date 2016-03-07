@@ -1,7 +1,6 @@
 #ifndef MRVN_QT5_EVENTHANDLER_H
 #define MRVN_QT5_EVENTHANDLER_H
 
-#include <QObject>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <caml/custom.h>
@@ -9,8 +8,6 @@
 #include <cassert>
 #include <stdio.h>
 
-#include "Connection.h"
-#include "OObject.h"
 #include "Proxy.h"
 
 extern char caml_mrvn_QT5_EventHandler_identifier[];
@@ -23,6 +20,7 @@ public:
     virtual void set(value ml_proxy, value ml_fn) = 0;
 };
 
+class QEvent;
 bool call_bool_QEvent(value closure, QEvent *event);
 
 template<class O>

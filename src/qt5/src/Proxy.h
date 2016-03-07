@@ -1,13 +1,11 @@
 #ifndef MRVN_QT5_PROXY_H
 #define MRVN_QT5_PROXY_H
 
-#include <QObject>
 #include <stdio.h>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <caml/custom.h>
 #include <cassert>
-#include "OObject.h"
 
 extern char caml_mrvn_QT5_Proxy_identifier[];
 extern struct custom_operations caml_mrvn_QT5_Proxy_custom_ops;
