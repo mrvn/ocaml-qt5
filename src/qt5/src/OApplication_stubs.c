@@ -44,9 +44,9 @@ protected:
     char **argv_;
 };
 
-class OQApplication : private StringArray, public OApplication, public QApplication {
+class OQApplication : public OApplication, private StringArray, public QApplication {
 public:
-OQApplication(value ml_args) : StringArray(ml_args), OApplication(), QApplication(argc_, argv_) {
+    OQApplication(value ml_args) : OApplication(), StringArray(ml_args), QApplication(argc_, argv_) {
 	fprintf(stderr, "%p [0x%lx]->%s(0x%lx)\n", this, maybe_obj(), __PRETTY_FUNCTION__, ml_args);
     }
     virtual ~OQApplication() {
