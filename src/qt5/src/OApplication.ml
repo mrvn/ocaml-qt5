@@ -14,13 +14,21 @@ end
 
 type t = oApplication OClass.t
 
-external make : string array -> t
-  = "caml_mrvn_QT5_OApplication_make"
+module type Make = sig
+  val stub : string array -> #oApplication OClass.t
+end
 
-let make args =
-  let proxy = make args
+class qApplication args =
+  let obj =
+    let module E = (val (module struct
+      external stub : string array -> #oApplication OClass.t = "caml_mrvn_QT5_OApplication_make"
+    end) : Make)
+    in
+    E.stub args
   in
-  new oApplication proxy
+object
+  inherit oApplication obj
+end
 
 (* show backtraces on failure *)
 let () = Printexc.record_backtrace true

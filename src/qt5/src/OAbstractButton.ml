@@ -14,23 +14,4 @@ end
 
 type t = oAbstractButton OClass.t
 
-  (*
-external make : unit -> t = "caml_mrvn_QT5_OAbstractButton_make"
-
-let make () =
-  let obj = make ()
-  in
-  new oAbstractButton obj
-  *)
-  
-(*
-external clicked : unit -> (oAbstractButton', bool -> unit) Signal.t =
-  "caml_mrvn_QT5_QAbstractButton_clicked"
-
-class oAbstractButton proxy = object(self)
-  inherit oAbstractButton'
-  inherit OWidget.oWidget proxy
-  method clicked = new Signal.signal self#as_oAbstractButton#proxy (clicked ())
-end
-*)
-  
+(* FIXME: AbstractButton is abstract, provide virtual class with virtual methods and glue them to c++ code *)

@@ -5,9 +5,18 @@ end
 
 type t = oWidget OClass.t
 
-external make : unit -> t = "caml_mrvn_QT5_OWidget_make"
+module type Make = sig
+  val stub : unit -> #oWidget OClass.t
+end
 
-let make () =
-  let obj = make ()
+class qWidget () =
+  let obj =
+    let module E = (val (module struct
+      external stub : unit -> #oWidget OClass.t = "caml_mrvn_QT5_OWidget_make"
+    end) : Make)
+    in
+    E.stub ()
   in
-  new oWidget obj
+object
+  inherit oWidget obj
+end

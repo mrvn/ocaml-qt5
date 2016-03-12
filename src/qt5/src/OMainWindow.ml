@@ -21,15 +21,18 @@ end
 
 type t = oMainWindow OClass.t
 
-  (*
-external centralWidget : t -> OWidget.oWidget Proxy.t = "caml_mrvn_QT5_OMainWindow_centralWidget"
-external setCentralWidget : t -> OWidget.t -> unit
-  = "caml_mrvn_QT5_OMainWindow_setCentralWidget"
-  *)
-  
-external make : unit -> t = "caml_mrvn_QT5_OMainWindow_make"
+module type Make = sig
+  val stub : unit -> #oMainWindow OClass.t
+end
 
-let make () =
-  let obj = make ()
+class qMainWindow () =
+  let obj =
+    let module E = (val (module struct
+      external stub : unit -> #oMainWindow OClass.t = "caml_mrvn_QT5_OMainWindow_make"
+    end) : Make)
+    in
+    E.stub ()
   in
-  new oMainWindow obj
+object
+  inherit oMainWindow obj
+end
