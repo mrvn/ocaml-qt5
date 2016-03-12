@@ -13,7 +13,7 @@ public:
     OMainWindow();
     virtual ~OMainWindow();
     virtual void preDestructor(QObject *obj);
-    virtual void setCentralWidget(OQWidget *w);
+    virtual void setCentralWidget(OWidget *w);
 };
 
 #undef MRVN_QT5_OMAINWINDOW_H__INSIDE

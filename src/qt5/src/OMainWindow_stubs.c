@@ -38,12 +38,14 @@ void OMainWindow::preDestructor(QObject *obj) {
     OWidget::preDestructor(obj);
 }
 
-void OMainWindow::setCentralWidget(OQWidget *w) {
+void OMainWindow::setCentralWidget(OWidget *w) {
     fprintf(stderr, "%p->%s(%p)\n", this, __PRETTY_FUNCTION__, w);
     w->incr();
     QMainWindow *win = dynamic_cast<QMainWindow *>(this);
     assert((win != nullptr) && "OMainWindow not mixed with QMainWindow");
-    win->setCentralWidget(w);
+    QWidget *widget = dynamic_cast<QWidget *>(w);
+    assert((widget != nullptr) && "OWidget not mixed with QWidget");
+    win->setCentralWidget(widget);
 }
 
 class OQMainWindow : public OMainWindow, public QMainWindow {
@@ -76,12 +78,18 @@ extern "C" value caml_mrvn_QT5_OMainWindow_centralWidget(value ml_win) {
 
 */
 
-extern "C" void caml_mrvn_QT5_OMainWindow_show(OQMainWindow *win) {
-    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, win);
+extern "C" void caml_mrvn_QT5_OMainWindow_show(OClass *obj) {
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QMainWindow *win = dynamic_cast<QMainWindow *>(obj);
+    assert(win != nullptr);
     win->show();
 }
 
-extern "C" void caml_mrvn_QT5_OMainWindow_setCentralWidget(OQMainWindow *win, OQWidget *widget) {
-    fprintf(stderr, "%s(win = %p, widget = %p)\n", __PRETTY_FUNCTION__, win, widget);
-    win->OMainWindow::setCentralWidget(widget);
+extern "C" void caml_mrvn_QT5_OMainWindow_setCentralWidget(OClass *obj, OClass *w) {
+    fprintf(stderr, "%s(obj = %p, widget = %p)\n", __PRETTY_FUNCTION__, obj, w);
+    OMainWindow *win = dynamic_cast<OMainWindow *>(obj);
+    assert((win != nullptr) && "obj is not a OMainWindow");
+    OWidget *widget = dynamic_cast<OWidget *>(w);
+    assert((w != nullptr) && "w is not a OWidget");
+    win->setCentralWidget(widget);
 }
