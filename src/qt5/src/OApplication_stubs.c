@@ -37,7 +37,7 @@ public:
 	for (int i = 0; i < argc_; ++i) {
 	    free(argv_[i]);
 	}
-	delete argv_;
+	delete[] argv_;
     }
 protected:
     int argc_;
