@@ -64,8 +64,6 @@ public:
     }
 };
 
-
-
 extern "C" value caml_mrvn_QT5_OPushButton_make(value ml_text) {
     CAMLparam1(ml_text);
     fprintf(stderr, "%s(\"%s\")\n", __PRETTY_FUNCTION__, String_val(ml_text));
