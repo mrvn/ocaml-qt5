@@ -15,8 +15,8 @@ Library QT5
   Build: true
   Install: true
   Pack: true
-  Modules: src/Proxy, src/OClass, src/Connection, src/Signal, src/OEvent, src/EventHandler, src/OObject, src/OWidget, src/OAbstractButton, src/OPushButton, src/OApplication, src/OMainWindow
-  CSources: src/Proxy.h, src/Proxy_stubs.c, src/OClass.h, src/OClass_stubs.c, src/Connection.h, src/Connection_stubs.c, src/Signal.h, src/Signal_stubs.c, src/OEvent.h, src/OEvent_stubs.c, src/EventHandler.h, src/EventHandler_stubs.c, src/OObject.h, src/OObject_stubs.c, src/OWidget.h, src/OWidget_stubs.c, src/OAbstractButton.h, src/OAbstractButton_stubs.c, src/OPushButton.h, src/OPushButton_stubs.c, src/OApplication.h, src/OApplication_stubs.c, src/OMainWindow.h, src/OMainWindow_stubs.c
+  Modules: src/External, src/OClass, src/Connection, src/Signal, src/OObject, src/OApplication, src/OEvent, src/OWidget, src/OMainWindow, src/OAbstractButton, src/OPushButton
+  CSources: src/caml_weak.h, src/OClass.h, src/Connection.h, src/Connection_stubs.c, src/Signal.h, src/Signal_stubs.c, src/OClass_stubs.c, src/OObject.h, src/OObject_stubs.c, src/OApplication.h, src/OApplication_stubs.c, src/OEvent.h, src/OEvent_stubs.c, src/OWidget.h, src/OWidget_stubs.c, src/OMainWindow.h, src/OMainWindow_stubs.c, src/OAbstractButton.h, src/OAbstractButton_stubs.c, src/OPushButton.h, src/OPushButton_stubs.c
 # pkg-config --cflags Qt5Widgets
   CCOpt: -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5 -x c++ -std=gnu++14 -Wno-pmf-conversions -O2 -W -Wall -fno-inline
 # pkg-config --libs Qt5Widgets

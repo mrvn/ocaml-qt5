@@ -1,19 +1,20 @@
-class virtual oApplication' = object(self)
-  inherit OObject.oObject'
-  method as_oApplication = (self :> oApplication')
+open External
+  
+class oApplication obj = object(self)
+  inherit OObject.oObject obj
+  method as_oApplication = (self :> oApplication)
+  method exec =
+    let module E = (val (module struct
+      type e = unit -> int
+      external stub : unit -> int = "caml_mrvn_QT5_OApplication_exec"
+    end) : External with type e = unit -> int)
+    in
+    E.stub ()
 end
 
-type t = oApplication' Proxy.t
+type t = oApplication OClass.t
 
-external exec : unit -> int = "caml_mrvn_QT5_OApplication_exec"
-
-class oApplication proxy = object
-  inherit oApplication'
-  inherit OObject.oObject proxy
-  method exec = exec ()
-end
-
-external make : string array -> oApplication Proxy.t
+external make : string array -> t
   = "caml_mrvn_QT5_OApplication_make"
 
 let make args =

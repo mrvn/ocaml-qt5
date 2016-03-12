@@ -1,11 +1,13 @@
-class virtual oWidget' = object(self)
-  inherit OObject.oObject'
-  method as_oWidget = (self :> oWidget')
+class oWidget obj = object(self)
+  inherit OObject.oObject obj
+  method as_oWidget = (self :> oWidget)
 end
 
-type t = oWidget' Proxy.t
+type t = oWidget OClass.t
 
-class oWidget proxy = object
-  inherit oWidget'
-  inherit OObject.oObject proxy
-end
+external make : unit -> t = "caml_mrvn_QT5_OWidget_make"
+
+let make () =
+  let obj = make ()
+  in
+  new oWidget obj

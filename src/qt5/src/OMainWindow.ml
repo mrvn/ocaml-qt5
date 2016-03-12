@@ -1,32 +1,35 @@
-class virtual oMainWindow' = object(self)
-  inherit OWidget.oWidget'
-  method as_oMainWindow = (self :> oMainWindow')
+open External
+
+class oMainWindow obj = object(self)
+  inherit OWidget.oWidget obj
+  method as_oMainWindow = (self :> oMainWindow)
+  method show =
+    let module E = (val (module struct
+      type e = oMainWindow OClass.t -> unit
+      external stub : oMainWindow OClass.t -> unit = "caml_mrvn_QT5_OMainWindow_show"
+    end) : External with type e = oMainWindow OClass.t -> unit)
+    in
+    E.stub self#as_oMainWindow#obj
+  method setCentralWidget : 'a . (<as_oWidget : OWidget.oWidget; ..> as 'a) -> unit = fun widget ->
+    let module E = (val (module struct
+      type e = oMainWindow OClass.t -> OWidget.t -> unit
+      external stub : oMainWindow OClass.t -> OWidget.t -> unit = "caml_mrvn_QT5_OMainWindow_setCentralWidget"
+    end) : External with type e = oMainWindow OClass.t -> OWidget.t -> unit)
+    in
+    E.stub self#as_oMainWindow#obj widget#as_oWidget#obj
 end
 
-type t = oMainWindow' Proxy.t
+type t = oMainWindow OClass.t
 
-external show : t -> unit = "caml_mrvn_QT5_OMainWindow_show"
+  (*
 external centralWidget : t -> OWidget.oWidget Proxy.t = "caml_mrvn_QT5_OMainWindow_centralWidget"
 external setCentralWidget : t -> OWidget.t -> unit
   = "caml_mrvn_QT5_OMainWindow_setCentralWidget"
-
-class oMainWindow proxy = object(self)
-  inherit oMainWindow'
-  inherit OWidget.oWidget proxy
-  method show = show self#as_oMainWindow#proxy
-  method centralWidget : OWidget.oWidget =
-    let widget_proxy = centralWidget self#as_oMainWindow#proxy
-    in
-    new OWidget.oWidget widget_proxy
-  method setCentralWidget : 'd . (#OWidget.oWidget' as 'd) -> unit = fun w ->
-      let widget_proxy = w#as_oWidget#proxy
-      in
-      setCentralWidget self#as_oMainWindow#proxy widget_proxy
-end
-
-external make : unit -> oMainWindow Proxy.t = "caml_mrvn_QT5_OMainWindow_make"
+  *)
+  
+external make : unit -> t = "caml_mrvn_QT5_OMainWindow_make"
 
 let make () =
-  let proxy = make ()
+  let obj = make ()
   in
-  new oMainWindow proxy
+  new oMainWindow obj

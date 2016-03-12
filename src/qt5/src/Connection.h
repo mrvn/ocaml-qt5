@@ -1,10 +1,13 @@
+#ifdef MRVN_QT5_CONNECTION_H__INSIDE
+#error header loop
+#endif
+
 #ifndef MRVN_QT5_CONNECTION_H
 #define MRVN_QT5_CONNECTION_H
+#define MRVN_QT5_CONNECTION_H__INSIDE
 
 #include <QMetaObject>
 #include <caml/mlvalues.h>
-
-#include "OClass.h"
 
 class Connection : private QMetaObject::Connection {
 public:
@@ -15,6 +18,5 @@ private:
     Connection(const QMetaObject::Connection &con);
 };
 
-//value make(QMetaObject::Connection con, value ml_fn);
-
+#undef MRVN_QT5_CONNECTION_H__INSIDE
 #endif // #ifndef MRVN_QT5_CONNECTION_H

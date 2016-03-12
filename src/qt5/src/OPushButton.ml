@@ -1,18 +1,13 @@
-class virtual oPushButton' = object(self)
-  inherit OAbstractButton.oAbstractButton'
-  method as_oPushButton = (self :> oPushButton')
+class oPushButton obj = object(self)
+  inherit OAbstractButton.oAbstractButton obj
+  method as_oPushButton = (self :> oPushButton)
 end
 
-type t = oPushButton' Proxy.t
+type t = oPushButton OClass.t
 
-class oPushButton proxy = object
-  inherit oPushButton'
-  inherit OAbstractButton.oAbstractButton proxy
-end
-
-external make : string -> oPushButton Proxy.t = "caml_mrvn_QT5_OPushButton_make"
+external external_make : string -> t = "caml_mrvn_QT5_OPushButton_make"
 
 let make text =
-  let proxy = make text
+  let obj = external_make text
   in
-  new oPushButton proxy
+  new oPushButton obj

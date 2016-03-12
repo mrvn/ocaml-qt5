@@ -1,9 +1,10 @@
 type ('a, 'b) t
 
 external connect :
-  'a Proxy.t -> ('a, 'b) t -> 'b -> Connection.t
+  'a OClass.t -> ('a, 'b) t -> 'b -> Connection.t
     = "caml_mrvn_QT5_Signal_connect"
 
-class ['a, 'b] signal (proxy : 'a Proxy.t) (signal : ('a, 'b) t) = object
-  method connect (fn : 'b) = connect proxy signal fn
+class ['a, 'b] signal (obj : 'a) signal =
+object
+  method connect (fn : 'b) = connect obj#obj signal fn
 end

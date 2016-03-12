@@ -1,26 +1,29 @@
+#ifdef MRVN_QT5_OWIDGET_H__INSIDE
+#error header loop
+#endif
+
 #ifndef MRVN_QT5_OWIDGET_H
 #define MRVN_QT5_OWIDGET_H
-
-#include <QWidget>
-#include <stdio.h>
+#define MRVN_QT5_OWIDGET_H__INSIDE
 
 #include "OObject.h"
 
-template<class Q>
-class OWidget : public OObject<Q> {
+class OWidget : public OObject {
 public:
-    template<typename ... A>
-    OWidget(A && ... a) : OObject<Q>(a...) {
-	fprintf(stderr, "%p <0x%lx>->%s()\n", this, OObject<Q>::proxy(), __PRETTY_FUNCTION__);
-    }
-    virtual ~OWidget() {
-	fprintf(stderr, "%p <0x%lx>->%s()\n", this, OObject<Q>::proxy(), __PRETTY_FUNCTION__);
-    }
+    OWidget();
+    virtual ~OWidget();
+    /*
     virtual void keyPressEvent(QKeyEvent * event) {
 	fprintf(stderr, "%p <0x%lx>->%s(%p)\n", this, OWidget<Q>::proxy(), __PRETTY_FUNCTION__, event);
 	Q::keyPressEvent(event);
     }
-private:
+    */
 };
 
+class OQWidget : public OWidget, public QWidget {
+public:
+    virtual ~OQWidget();
+};
+
+#undef MRVN_QT5_OWIDGET_H__INSIDE
 #endif // #ifndef MRVN_QT5_OWIDGET_H

@@ -1,5 +1,10 @@
+#ifdef MRVN_QT5_SIGNAL_H__INSIDE
+#error header loop
+#endif
+
 #ifndef MRVN_QT5_SIGNAL_H
 #define MRVN_QT5_SIGNAL_H
+#define MRVN_QT5_SIGNAL_H__INSIDE
 
 #include <QObject>
 #include <caml/mlvalues.h>
@@ -11,9 +16,6 @@
 
 #include "Connection.h"
 #include "OObject.h"
-
-extern char caml_mrvn_QT5_Signal_identifier[];
-extern struct custom_operations caml_mrvn_QT5_Signal_custom_ops;
 
 class SignalBase {
 public:
@@ -40,4 +42,5 @@ private:
     void (O::*fn_)(A);
 };
 
+#undef MRVN_QT5_SIGNAL_H__INSIDE
 #endif // #ifndef MRVN_QT5_SIGNAL_H
