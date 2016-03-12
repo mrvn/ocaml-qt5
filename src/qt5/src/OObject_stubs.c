@@ -24,25 +24,27 @@ bool OObject::event(QEvent *event) {
     CAMLparam0();
     CAMLlocal3(obj, handleEvent, res);
     static value hash = caml_hash_variant("externalEvent");
-    fprintf(stderr, "%p <0x%lx>->%s(%p)\n", this, get_obj(), __PRETTY_FUNCTION__, event);
-    obj = get_obj();
-    handleEvent = caml_get_public_method(obj, hash);
-    if (handleEvent != 0) {
-	fprintf(stderr, "  calling 0x%lu\n", handleEvent);
-	res = caml_callback2(handleEvent, obj, (value)event);
-	if (Is_exception_result(res)) {
-	    // on exception pass event upstream
-	    res = Extract_exception(res);
-	    fprintf(stderr, "  callback got exception 0x%ld\n", res);
-	} else if (Bool_val(res)) {
-	    // all done
-	    fprintf(stderr, "  handled\n");
-	    CAMLreturn(true);
+    fprintf(stderr, "%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, event);
+    obj = maybe_obj();
+    if (obj != 0) { // ocaml object still attached
+	handleEvent = caml_get_public_method(obj, hash);
+	if (handleEvent != 0) {
+	    fprintf(stderr, "  calling 0x%lu\n", handleEvent);
+	    res = caml_callback2(handleEvent, obj, (value)event);
+	    if (Is_exception_result(res)) {
+		// on exception pass event upstream
+		res = Extract_exception(res);
+		fprintf(stderr, "  callback got exception 0x%ld\n", res);
+	    } else if (Bool_val(res)) {
+		// all done
+		fprintf(stderr, "  handled\n");
+		CAMLreturn(true);
+	    } else {
+		fprintf(stderr, "  not handled\n");
+	    }
 	} else {
-	    fprintf(stderr, "  not handled\n");
+	    fprintf(stderr, "  not intercepted\n");
 	}
-    } else {
-	fprintf(stderr, "  not intercepted\n");
     }
     QObject *q = dynamic_cast<QObject *>(this);
     assert((q != nullptr) && "OObject not mixed with QObject");
