@@ -7,11 +7,11 @@
 #include "caml_weak.h"
 
 OClass::OClass(size_t ref_count) : ml_obj_(0), ref_count_(ref_count) {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 OClass::~OClass() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
     assert((ml_obj_ == 0) && "Qt5 object destroyed while alive in ocaml");
     if (ref_count_ != 0) {
 	// Qt destroyed us, must be the last reference
@@ -32,7 +32,7 @@ OClass::~OClass() {
 }
 
 void OClass::register_obj(value ml_obj) {
-    fprintf(stderr, "%p->%s(0x%lx)\n", this, __PRETTY_FUNCTION__, ml_obj);
+    fprintf(stderr, "%p [0x%lx]->%s(0x%lx)\n", this, maybe_obj(), __PRETTY_FUNCTION__, ml_obj);
     assert((ml_obj_ == 0) && "registered twice");
     ml_obj_ = ml_obj;
     caml_register_generational_global_root(&ml_obj_);
@@ -42,7 +42,7 @@ void OClass::register_obj(value ml_obj) {
 void OClass::unregister_obj() {
     // fprintf(stderr, "%p [0x%lx]->%s\n", this, get_obj(), __PRETTY_FUNCTION__);
     // Weak.t is already None
-    fprintf(stderr, "%p [...]->%s\n", this, __PRETTY_FUNCTION__);
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
     assert((ml_obj_ != 0) && "not registered");
     caml_remove_generational_global_root(&ml_obj_);
     ml_obj_ = 0;
@@ -56,7 +56,7 @@ void OClass::incr(size_t amount) {
 }
 
 void OClass::decr(size_t amount) {
-    fprintf(stderr, "%p [...]->%s(%zu)\n", this, __PRETTY_FUNCTION__, amount);
+    fprintf(stderr, "%p [0x%lx]->%s(%zu)\n", this, maybe_obj(), __PRETTY_FUNCTION__, amount);
     --ref_count_;
     //fprintf(stderr, "  = %zu\n", ref_count_);
     if (ref_count_ == 0) {
@@ -70,21 +70,21 @@ void OClass::decr(size_t amount) {
 value OClass::maybe_obj() {
     CAMLparam0();
     CAMLlocal2(opt, res);
-    // fprintf(stderr, "%p [weak=0x%lx]->%s()\n", this, ml_obj_, __PRETTY_FUNCTION__);
+    // fprintf(stderr, "%p [weak=0x%lx]->%s\n", this, ml_obj_, __PRETTY_FUNCTION__);
     res = 0;
     if (ml_obj_ != 0) {
 	opt = caml_weak_get(ml_obj_, 0);
-	// fprintf(stderr, "%p [weak=0x%lx]->%s(): opt = 0x%lx\n", this, ml_obj_, __PRETTY_FUNCTION__, opt);
+	// fprintf(stderr, "%p [weak=0x%lx]->%s: opt = 0x%lx\n", this, ml_obj_, __PRETTY_FUNCTION__, opt);
 	if (Is_block(opt)) { // Some x
 	    res = Field(opt, 0);
-	    // fprintf(stderr, "%p [weak=0x%lx]->%s(): res = 0x%lx\n", this, ml_obj_, __PRETTY_FUNCTION__, res);
+	    // fprintf(stderr, "%p [weak=0x%lx]->%s: res = 0x%lx\n", this, ml_obj_, __PRETTY_FUNCTION__, res);
 	    if (res != 0) {
-		// fprintf(stderr, "%p [weak=0x%lx]->%s(): tag = %u\n", this, ml_obj_, __PRETTY_FUNCTION__, Tag_val(res));
+		// fprintf(stderr, "%p [weak=0x%lx]->%s: tag = %u\n", this, ml_obj_, __PRETTY_FUNCTION__, Tag_val(res));
 		assert((Tag_val(res) == Object_tag) && "this is not attached to an ocaml object");
 	    }
 	}
     }
-    // fprintf(stderr, "%p [0x%lx]->%s()\n", this, res, __PRETTY_FUNCTION__);
+    // fprintf(stderr, "%p [0x%lx]->%s\n", this, res, __PRETTY_FUNCTION__);
     CAMLreturn(res);
 }
 

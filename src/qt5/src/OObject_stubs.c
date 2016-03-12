@@ -9,15 +9,15 @@
 #include <cassert>
 
 OObject::OObject() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 OObject::~OObject() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 void OObject::preDestructor(QObject *obj) {
-    fprintf(stderr, "%p->%s(%p)\n", this, __PRETTY_FUNCTION__, obj);
+    fprintf(stderr, "%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, obj);
 }
 
 bool OObject::event(QEvent *event) {
@@ -50,7 +50,7 @@ bool OObject::event(QEvent *event) {
 }
 
 OQObject::~OQObject() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
     preDestructor(this);
 }
 
@@ -65,4 +65,3 @@ extern "C" void caml_mrvn_QT5_OObject_destroy(OObject *obj) {
     fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
     delete obj;
 }
-
