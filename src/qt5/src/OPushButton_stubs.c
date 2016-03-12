@@ -72,5 +72,5 @@ extern "C" value caml_mrvn_QT5_OPushButton_make(value ml_text) {
     QString text(String_val(ml_text));
     OQPushButton *obj = new OQPushButton(text);
     assert(obj != nullptr);
-    CAMLreturn(value(obj));
+    CAMLreturn(value(static_cast<OClass *>(obj)));
 }

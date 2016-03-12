@@ -24,5 +24,5 @@ extern "C" value caml_mrvn_QT5_OWidget_make(void) {
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
     OQWidget *obj = new OQWidget();
     assert(obj != nullptr);
-    return value(obj);
+    return value(static_cast<OClass *>(obj));
 }

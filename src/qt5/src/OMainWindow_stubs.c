@@ -61,7 +61,7 @@ extern "C" value caml_mrvn_QT5_OMainWindow_make(void) {
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
     OQMainWindow *win = new OQMainWindow();
     assert((win != nullptr) && "OMainWindow not mixed with QMainWindow");
-    return value(win);
+    return value(static_cast<OClass *>(win));
 }
 
 /*

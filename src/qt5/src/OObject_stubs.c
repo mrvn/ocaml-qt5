@@ -58,7 +58,7 @@ extern "C" value caml_mrvn_QT5_OObject_make(void) {
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
     OQObject *obj = new OQObject();
     assert(obj != nullptr);
-    return value(obj);
+    return value(static_cast<OClass *>(obj));
 }
 
 extern "C" void caml_mrvn_QT5_OObject_destroy(OObject *obj) {

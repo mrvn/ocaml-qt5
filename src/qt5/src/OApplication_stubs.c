@@ -66,6 +66,6 @@ extern "C" value caml_mrvn_QT5_OApplication_make(value ml_args) {
   fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
   OQApplication *app = new OQApplication(ml_args);
   assert(app != nullptr);
-  fprintf(stderr, "%s() = %p\n", __PRETTY_FUNCTION__, app);
-  CAMLreturn(value(app));
+  fprintf(stderr, "%s = %p\n", __PRETTY_FUNCTION__, app);
+  CAMLreturn(value(static_cast<OClass *>(app)));
 }

@@ -29,7 +29,7 @@ extern "C" value caml_mrvn_QT5_OAbstractButton_make(void) {
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
     OQAbstractButton *obj = new OQAbstractButton();
     assert(obj != nullptr);
-    return value(obj);
+    return value(static_cast<OClass *>(obj));
 }
 */
 
