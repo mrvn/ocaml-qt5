@@ -8,7 +8,7 @@
 
 #include "OWidget.h"
 
-class OAbstractButton : public OWidget {
+class OAbstractButton : public virtual OWidget {
 public:
     OAbstractButton();
     virtual ~OAbstractButton();

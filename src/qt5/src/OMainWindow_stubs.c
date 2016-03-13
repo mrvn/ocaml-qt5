@@ -76,15 +76,6 @@ extern "C" value caml_mrvn_QT5_OMainWindow_centralWidget(value ml_win) {
 
 */
 
-extern "C" value caml_mrvn_QT5_OMainWindow_show(OClass *obj) {
-    CAMLparam0();
-    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
-    QMainWindow *win = dynamic_cast<QMainWindow *>(obj);
-    assert(win != nullptr);
-    win->show();
-    CAMLreturn(Val_unit);
-}
-
 extern "C" value caml_mrvn_QT5_OMainWindow_setCentralWidget(OClass *obj, OClass *w) {
     CAMLparam0();
     fprintf(stderr, "%s(obj = %p, widget = %p)\n", __PRETTY_FUNCTION__, obj, w);

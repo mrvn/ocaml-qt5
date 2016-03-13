@@ -1,7 +1,4 @@
-class oWidget obj = object(self)
-  inherit OObject.oObject obj
-  method as_oWidget = (self :> oWidget)
-end
+include OWidget_OLayout
 
 type t = oWidget OClass.t
 

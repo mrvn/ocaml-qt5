@@ -8,7 +8,7 @@
 
 #include "OWidget.h"
 
-class OMainWindow : public OWidget {
+class OMainWindow : public virtual OWidget {
 public:
     OMainWindow();
     virtual ~OMainWindow();

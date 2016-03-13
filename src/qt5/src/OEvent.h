@@ -10,7 +10,7 @@
 
 class QEvent;
 
-class OEvent : public OClass {
+class OEvent : public virtual OClass {
 public:
     OEvent(QEvent *event);
     virtual ~OEvent();

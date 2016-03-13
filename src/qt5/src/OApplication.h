@@ -9,7 +9,7 @@
 #include "OObject.h"
 #include "StringArray.h"
 
-class OApplication : public OObject {
+class OApplication : public virtual OObject {
 public:
     OApplication();
     virtual ~OApplication();

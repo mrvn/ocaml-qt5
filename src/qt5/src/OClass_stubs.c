@@ -11,27 +11,31 @@ OClass::OClass(size_t ref_count) : ml_obj_(0), ref_count_(ref_count) {
 }
 
 OClass::~OClass() {
+    CAMLparam0();
+    CAMLlocal3(obj, fn, res);
     fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
     assert((ml_obj_ == 0) && "Qt5 object destroyed while alive in ocaml");
     if (ref_count_ != 0) {
-	// Qt destroyed us, must be the last reference
-	assert((ref_count_ == 1) && "Qt5 object destroyed while still in use by Qt5");
-	ref_count_ = 0;
-	/*
 	if (ml_obj_ != 0) {
 	    // ocaml object still attached, this should not happen
-	    value obj = get_obj();
+	    // but some things can't be taken back from Qt, e.g. QWidget::setLayout()
+	    obj = get_obj();
 	    fprintf(stderr, "%p->%s: obj = 0x%lx\n", this, __PRETTY_FUNCTION__, obj);
-	    value fn = caml_get_public_method(obj, caml_hash_variant("invalidate"));
+	    fn = caml_get_public_method(obj, caml_hash_variant("invalidate"));
 	    fprintf(stderr, "%p->%s: fn = 0x%lx\n", this, __PRETTY_FUNCTION__, fn);
 	    assert((fn != 0) && "ocaml object for this has no invalidate method");
 	    res = caml_callback_exn(fn, obj);
 	    if (Is_exception_result(res)) {
 	        res = Extract_exception(res);
+		fprintf(stderr, "%s: callback got exception 0x%lx\n", __PRETTY_FUNCTION__, res);
+		assert(false);
 	    }
 	}
-	*/
+	// Qt destroyed us, must be the last reference
+	assert((ref_count_ == 1) && "Qt5 object destroyed while still in use by Qt5");
+	ref_count_ = 0;
     }
+    CAMLreturn0;
 }
 
 void OClass::register_obj(value ml_obj) {

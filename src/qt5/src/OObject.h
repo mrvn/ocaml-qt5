@@ -12,7 +12,7 @@
 
 class QObject;
 
-class OObject : public OClass {
+class OObject : public virtual OClass {
 public:
     OObject();
     virtual ~OObject();
@@ -21,7 +21,7 @@ public:
 };
 
 template<class O, class Q>
-class TObject : public O, public Q {
+class TObject : public virtual O, public Q {
 public:
     template<typename ... A>
     TObject(A && ... a) : O(), Q(std::forward<A>(a) ...) {

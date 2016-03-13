@@ -15,8 +15,8 @@ Library QT5
   Build: true
   Install: true
   Pack: true
-  Modules: src/External, src/OClass, src/Connection, src/Signal, src/OEvent, src/OObject, src/OApplication, src/OWidget, src/OMainWindow, src/OAbstractButton, src/OPushButton
-  CSources: src/caml_weak.h, src/OClass.h, src/Connection.h, src/Connection_stubs.c, src/Signal.h, src/Signal_stubs.c, src/OClass_stubs.c, src/OEvent.h, src/OEvent_stubs.c, src/OObject.h, src/OObject_stubs.c, src/StringArray.h, src/StringArray.c, src/OApplication.h, src/OApplication_stubs.c, src/OWidget.h, src/OWidget_stubs.c, src/OMainWindow.h, src/OMainWindow_stubs.c, src/OAbstractButton.h, src/OAbstractButton_stubs.c, src/OPushButton.h, src/OPushButton_stubs.c
+  Modules: src/External, src/OClass, src/Connection, src/Signal, src/OEvent, src/OObject, src/OApplication, src/Qt, src/OLayoutItem, src/OWidget_OLayout, src/OLayout, src/OWidget, src/OMainWindow, src/OAbstractButton, src/OPushButton, src/OFrame, src/OLabel, src/OGridLayout
+  CSources: src/caml_weak.h, src/OClass.h, src/Connection.h, src/Connection_stubs.c, src/Signal.h, src/Signal_stubs.c, src/OClass_stubs.c, src/OEvent.h, src/OEvent_stubs.c, src/OObject.h, src/OObject_stubs.c, src/StringArray.h, src/StringArray.c, src/OApplication.h, src/OApplication_stubs.c, src/OLayoutItem.h, src/OLayoutItem_stubs.c, src/OLayout.h, src/OLayout_stubs.c, src/OWidget.h, src/OWidget_stubs.c, src/OMainWindow.h, src/OMainWindow_stubs.c, src/OAbstractButton.h, src/OAbstractButton_stubs.c, src/OPushButton.h, src/OPushButton_stubs.c, src/OFrame.h, src/OFrame_stubs.c, src/OLabel.h, src/OLabel_stubs.c, src/OGridLayout.h, src/OGridLayout_stubs.c
 # pkg-config --cflags Qt5Widgets
   CCOpt: -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5 -x c++ -std=gnu++14 -Wno-pmf-conversions -O2 -W -Wall -fno-inline
 # pkg-config --libs Qt5Widgets
@@ -31,6 +31,12 @@ Executable test_app
   Path: src/test
   BuildDepends: QT5
   MainIs: app.ml
+  CompiledObject: best
+
+Executable tetrix
+  Path: src/tetrix
+  BuildDepends: QT5
+  MainIs: tetrix.ml
   CompiledObject: best
 
 Test app_test

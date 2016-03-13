@@ -8,7 +8,7 @@
 
 #include "OAbstractButton.h"
 
-class OPushButton : public OAbstractButton {
+class OPushButton : public virtual OAbstractButton {
 public:
     OPushButton();
     virtual ~OPushButton();

@@ -8,10 +8,13 @@
 
 #include "OObject.h"
 
-class OWidget : public OObject {
+class OLayout;
+
+class OWidget : public virtual OObject {
 public:
     OWidget();
     virtual ~OWidget();
+    void setLayout(OLayout *layout);
     /*
     virtual void keyPressEvent(QKeyEvent * event) {
 	fprintf(stderr, "%p <0x%lx>->%s(%p)\n", this, OWidget<Q>::proxy(), __PRETTY_FUNCTION__, event);
