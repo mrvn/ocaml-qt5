@@ -8,6 +8,8 @@
 #include <caml/callback.h>
 #include <cassert>
 
+#include "OEvent.h"
+
 OObject::OObject() {
     fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
@@ -23,37 +25,45 @@ void OObject::preDestructor() {
 bool OObject::event(QEvent *event) {
     CAMLparam0();
     CAMLlocal3(obj, handleEvent, res);
-    static value hash = caml_hash_variant("externalEvent");
+    static value hash = caml_hash_variant("external_event");
     fprintf(stderr, "%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, event);
     obj = maybe_obj();
-    if (obj != 0) { // ocaml object still attached
+    if (obj != 0) { // ocaml object still atached
+	fprintf(stderr, "  obj = 0x%lx\n", obj);
 	handleEvent = caml_get_public_method(obj, hash);
+	fprintf(stderr, "  handleEvent = 0x%lx\n", handleEvent);
 	if (handleEvent != 0) {
-	    fprintf(stderr, "  calling 0x%lu\n", handleEvent);
-	    res = caml_callback2_exn(handleEvent, obj, (value)event);
+	    OEvent *oEvent = new OEvent(event);
+	    fprintf(stderr, "  oEvent = %p\n", oEvent);
+	    assert(oEvent != nullptr);
+	    fprintf(stderr, "  calling 0x%lx\n", handleEvent);
+	    res = caml_callback2_exn(handleEvent, obj, (value)oEvent);
 	    if (Is_exception_result(res)) {
 		// on exception pass event upstream
 		res = Extract_exception(res);
-		fprintf(stderr, "%s: callback got exception 0x%ld\n", __PRETTY_FUNCTION__, res);
-	    } else if (Bool_val(res)) {
-		// all done
-		fprintf(stderr, "  handled\n");
-		CAMLreturn(true);
+		fprintf(stderr, "%s: callback got exception 0x%lx\n", __PRETTY_FUNCTION__, res);
+		assert(false);
+		fprintf(stderr, "  remove event\n");
+		oEvent->removeEvent();
+		fprintf(stderr, "  event removed\n");
 	    } else {
-		fprintf(stderr, "  not handled\n");
+		fprintf(stderr, "  remove event\n");
+		oEvent->removeEvent();
+		fprintf(stderr, "  event removed\n");
+		if (Bool_val(res)) {
+		    // all done
+		    fprintf(stderr, "  handled\n");
+		    CAMLreturn(true);
+		} else {
+		    fprintf(stderr, "  not handled\n");
+		}
 	    }
 	} else {
 	    fprintf(stderr, "  not intercepted\n");
 	}
     }
-    QObject *q = dynamic_cast<QObject *>(this);
-    assert((q != nullptr) && "OObject not mixed with QObject");
-    CAMLreturn(q->QObject::event(event));
-}
-
-OQObject::~OQObject() {
-    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
-    preDestructor();
+    // fall through to original event handler
+    CAMLreturn(false);
 }
 
 extern "C" value caml_mrvn_QT5_OObject_make(void) {

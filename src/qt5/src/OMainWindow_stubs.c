@@ -57,17 +57,6 @@ void OMainWindow::setCentralWidget(OWidget *w) {
     win->setCentralWidget(widget);
 }
 
-class OQMainWindow : public OMainWindow, public QMainWindow {
-public:
-    OQMainWindow() : OMainWindow(), QMainWindow() {
-	fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
-    }
-    virtual ~OQMainWindow() {
-	fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
-	preDestructor();
-    }
-};
-
 extern "C" value caml_mrvn_QT5_OMainWindow_make(void) {
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
     OQMainWindow *win = new OQMainWindow();

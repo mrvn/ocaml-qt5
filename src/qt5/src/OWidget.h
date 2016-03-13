@@ -20,10 +20,19 @@ public:
     */
 };
 
-class OQWidget : public OWidget, public QWidget {
+template<class O, class Q>
+class TWidget : public TObject<O, Q> {
 public:
-    virtual ~OQWidget();
+    template<typename ... A>
+    TWidget(A && ... a) : TObject<O, Q>(std::forward<A>(a) ...) {
+	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+    }
+    virtual ~TWidget() {
+	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+    }
 };
+
+using OQWidget = TWidget<OWidget, QWidget>;
 
 #undef MRVN_QT5_OWIDGET_H__INSIDE
 #endif // #ifndef MRVN_QT5_OWIDGET_H
