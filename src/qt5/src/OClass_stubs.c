@@ -25,7 +25,10 @@ OClass::~OClass() {
 	    value fn = caml_get_public_method(obj, caml_hash_variant("invalidate"));
 	    fprintf(stderr, "%p->%s: fn = 0x%lx\n", this, __PRETTY_FUNCTION__, fn);
 	    assert((fn != 0) && "ocaml object for this has no invalidate method");
-	    caml_callback(fn, obj);
+	    res = caml_callback_exn(fn, obj);
+	    if (Is_exception_result(res)) {
+	        res = Extract_exception(res);
+	    }
 	}
 	*/
     }
@@ -107,13 +110,18 @@ extern "C" value caml_mrvn_Qt5_OClass_make(void) {
 }
 
 //external register : 'a t -> 'a -> unit = "caml_mrvn_Qt5_OClass_register_obj"
-extern "C" void caml_mrvn_Qt5_OClass_register_obj(OClass *obj, value ml_obj) {
+extern "C" value caml_mrvn_Qt5_OClass_register_obj(OClass *obj, value ml_obj) {
+    CAMLparam1(ml_obj);
     fprintf(stderr, "%s(%p, 0x%lx)\n", __PRETTY_FUNCTION__, obj, ml_obj);
     obj->register_obj(ml_obj);
+    CAMLreturn(Val_unit);
 }
 
 //external unregister : 'a t -> unit = "caml_mrvn_Qt5_OClass_unregister_obj"
-extern "C" void caml_mrvn_Qt5_OClass_unregister_obj(OClass *obj) {
+extern "C" value caml_mrvn_Qt5_OClass_unregister_obj(OClass *obj) {
+    CAMLparam0();
     fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
     obj->unregister_obj();
+    fprintf(stderr, "%s(%p) done\n", __PRETTY_FUNCTION__, obj);
+    CAMLreturn(Val_unit);
 }

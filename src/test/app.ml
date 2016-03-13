@@ -10,14 +10,17 @@ class button text = object
   inherit QT5.OObject.event
   method event event =
     Printf.printf "App: event (ocaml)\n%!";
+    Gc.full_major ();
+    Printf.printf "App: event (ocaml) done Gc\n%!";
     false
 end
 
+let () = Printf.printf "OApplication test\n%!"
+let app = new QT5.OApplication.qApplication Sys.argv
+let win = new QT5.OMainWindow.qMainWindow ()
+
 let res =
-  Printf.printf "OApplication test\n%!";
-  let app = new QT5.OApplication.qApplication Sys.argv in
   let b = new button "push" in
-  let win = new QT5.OMainWindow.qMainWindow () in
   let connection =
     b#clicked#connect
       (fun checked -> Printf.printf "App: button clicked (ocaml)\n%!")

@@ -37,7 +37,7 @@ value caml_mrvn_QT5_Signal_connect(OObject *obj, SignalBase * signal, value ml_f
     CAMLreturn(Connection::make(con));
 }
 
-void call2(value closure, bool arg) {
+value call2(value closure, bool arg) {
     CAMLparam1(closure);
     CAMLlocal1(res);
     res = caml_callback_exn(closure, Val_bool(arg));
@@ -45,6 +45,6 @@ void call2(value closure, bool arg) {
         res = Extract_exception(res);
 	fprintf(stderr, "%s: callback got exception 0x%ld\n", __PRETTY_FUNCTION__, res);
     }
-    CAMLreturn0;
+    CAMLreturn(Val_unit);
 }
 

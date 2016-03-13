@@ -24,7 +24,7 @@ public:
     virtual QMetaObject::Connection connect(QObject *obj, value ml_fn) = 0;
 };
 
-void call2(value closure, bool arg);
+value call2(value closure, bool arg);
 
 template<class O, typename A>
 class Signal : public SignalBase {

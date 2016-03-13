@@ -11,8 +11,10 @@ external unregister : 'a t -> unit = "caml_mrvn_Qt5_OClass_unregister_obj"
 let finalise_helper oClass =
   Printf.printf "OClass.finalise_helper\n%!";
   try
-    unregister oClass#obj
-  with Destroyed -> ()
+    unregister oClass#obj;
+  with Destroyed -> (* unused at the moment, assertion in OClass::~OClass() *)
+    Printf.printf "OClass.finalise_helper: Destroyed\n%!";
+    ()
 
 class oClass (obj : 'a t) =
 object(self : 'a)

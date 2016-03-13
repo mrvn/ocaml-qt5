@@ -54,11 +54,10 @@ external disconnect : 'a t -> unit
   = "caml_mrvn_QT5_Connection_disconnect"
 */
 extern "C"
-void caml_mrvn_QT5_Connection_disconnect(value ml_con) {
+value caml_mrvn_QT5_Connection_disconnect(value ml_con) {
   CAMLparam1(ml_con);
   Connection *con = (Connection *)Data_custom_val(ml_con);
   con->disconnect();
-  CAMLreturn0;
+  CAMLreturn(Val_unit);
 }
-
 

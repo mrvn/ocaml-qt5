@@ -39,6 +39,6 @@ let () =
     (fun () ->
       let rec loop = function
 	| 0 -> ()
-	| n -> Gc.full_major (); loop (n - 1)
+	| n -> Printf.printf "Gc.full_major ()\n%!"; Gc.full_major (); loop (n - 1)
       in
       loop 10)

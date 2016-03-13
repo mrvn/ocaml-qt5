@@ -30,11 +30,11 @@ bool OObject::event(QEvent *event) {
 	handleEvent = caml_get_public_method(obj, hash);
 	if (handleEvent != 0) {
 	    fprintf(stderr, "  calling 0x%lu\n", handleEvent);
-	    res = caml_callback2(handleEvent, obj, (value)event);
+	    res = caml_callback2_exn(handleEvent, obj, (value)event);
 	    if (Is_exception_result(res)) {
 		// on exception pass event upstream
 		res = Extract_exception(res);
-		fprintf(stderr, "  callback got exception 0x%ld\n", res);
+		fprintf(stderr, "%s: callback got exception 0x%ld\n", __PRETTY_FUNCTION__, res);
 	    } else if (Bool_val(res)) {
 		// all done
 		fprintf(stderr, "  handled\n");
@@ -53,17 +53,20 @@ bool OObject::event(QEvent *event) {
 
 OQObject::~OQObject() {
     fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
-    preDestructor(this);
+    preDestructor();
 }
 
 extern "C" value caml_mrvn_QT5_OObject_make(void) {
+    CAMLparam0();
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
     OQObject *obj = new OQObject();
     assert(obj != nullptr);
-    return value(static_cast<OClass *>(obj));
+    CAMLreturn(value(static_cast<OClass *>(obj)));
 }
 
-extern "C" void caml_mrvn_QT5_OObject_destroy(OObject *obj) {
+extern "C" value caml_mrvn_QT5_OObject_destroy(OObject *obj) {
+    CAMLparam0();
     fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
     delete obj;
+    CAMLreturn(Val_unit);
 }
