@@ -25,7 +25,7 @@ public:
     }
     virtual ~OQPushButton() {
 	fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
-	preDestructor(this);
+	preDestructor();
     }
     virtual bool event(QEvent *event) final override {
 	CAMLparam0();

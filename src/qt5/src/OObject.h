@@ -14,7 +14,7 @@ class OObject : public OClass {
 public:
     OObject();
     virtual ~OObject();
-    virtual void preDestructor(QObject *obj);
+    virtual void preDestructor();
     virtual bool event(QEvent *event);
 };
 

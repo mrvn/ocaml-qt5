@@ -20,7 +20,7 @@ class OQAbstractButton : public OAbstractButton, public QAbstractButton {
 public:
     virtual ~OQAbstractButton() {
 	fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
-	preDestructor(this);
+	preDestructor();
     }
 };
 

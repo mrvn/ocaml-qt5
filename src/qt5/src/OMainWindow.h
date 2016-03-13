@@ -12,8 +12,10 @@ class OMainWindow : public OWidget {
 public:
     OMainWindow();
     virtual ~OMainWindow();
-    virtual void preDestructor(QObject *obj);
+    virtual void preDestructor();
     virtual void setCentralWidget(OWidget *w);
+private:
+    void removeCentralWidget();
 };
 
 #undef MRVN_QT5_OMAINWINDOW_H__INSIDE

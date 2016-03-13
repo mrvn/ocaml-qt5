@@ -16,8 +16,8 @@ OObject::~OObject() {
     fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
-void OObject::preDestructor(QObject *obj) {
-    fprintf(stderr, "%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, obj);
+void OObject::preDestructor() {
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 bool OObject::event(QEvent *event) {

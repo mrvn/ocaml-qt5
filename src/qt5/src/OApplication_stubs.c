@@ -51,7 +51,7 @@ public:
     }
     virtual ~OQApplication() {
 	fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
-	preDestructor(this);
+	preDestructor();
     }
 };
 

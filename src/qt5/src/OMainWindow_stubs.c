@@ -15,10 +15,9 @@ OMainWindow::~OMainWindow() {
     fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
 }
 
-void OMainWindow::preDestructor(QObject *obj) {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
-    // take central widget and see if we need to keep it
-    QMainWindow *win = dynamic_cast<QMainWindow *>(obj);
+void OMainWindow::removeCentralWidget() {
+    QMainWindow *win = dynamic_cast<QMainWindow *>(this);
+    assert((win != nullptr) && "OMainWindow not mixed with QMainWindow");
     QWidget *w = win->takeCentralWidget();
     if (w != nullptr) {
 	fprintf(stderr, "  has central widget\n");
@@ -34,8 +33,13 @@ void OMainWindow::preDestructor(QObject *obj) {
 	    delete w;
 	}
     }
-    fprintf(stderr, "  OWidget::preDestructor(%p)\n", this);
-    OWidget::preDestructor(obj);
+}
+
+void OMainWindow::preDestructor() {
+    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    // remove central widget from main window
+    removeCentralWidget();
+    OWidget::preDestructor();
 }
 
 void OMainWindow::setCentralWidget(OWidget *w) {
@@ -55,7 +59,7 @@ public:
     }
     virtual ~OQMainWindow() {
 	fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
-	preDestructor(this);
+	preDestructor();
     }
 };
 
