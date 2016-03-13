@@ -18,19 +18,21 @@ OMainWindow::~OMainWindow() {
 void OMainWindow::removeCentralWidget() {
     QMainWindow *win = dynamic_cast<QMainWindow *>(this);
     assert((win != nullptr) && "OMainWindow not mixed with QMainWindow");
-    QWidget *w = win->takeCentralWidget();
-    if (w != nullptr) {
-	fprintf(stderr, "  has central widget\n");
-	// has a central widget
-	OWidget *o = dynamic_cast<OWidget *>(w);
-	if (o != nullptr) {
-	    // it's an ocaml widget, lower ref count
-	    fprintf(stderr, "  decrementing\n");
-	    o->decr();
-	} else {
-	    fprintf(stderr, "  pure QT5 widget, delete\n");
-	    // pure QT5 widget, delete
-	    delete w;
+    if (win->centralWidget() != nullptr) { // protect buggy win->takeCentralWidget()
+	QWidget *w = win->takeCentralWidget();
+	if (w != nullptr) {
+	    fprintf(stderr, "  has central widget\n");
+	    // has a central widget
+	    OWidget *o = dynamic_cast<OWidget *>(w);
+	    if (o != nullptr) {
+		// it's an ocaml widget, lower ref count
+		fprintf(stderr, "  decrementing\n");
+		o->decr();
+	    } else {
+		fprintf(stderr, "  pure QT5 widget, delete\n");
+		// pure QT5 widget, delete
+		delete w;
+	    }
 	}
     }
 }
@@ -44,6 +46,9 @@ void OMainWindow::preDestructor() {
 
 void OMainWindow::setCentralWidget(OWidget *w) {
     fprintf(stderr, "%p->%s(%p)\n", this, __PRETTY_FUNCTION__, w);
+    // remove old central widget
+    removeCentralWidget();
+    // add new central widget
     w->incr();
     QMainWindow *win = dynamic_cast<QMainWindow *>(this);
     assert((win != nullptr) && "OMainWindow not mixed with QMainWindow");
