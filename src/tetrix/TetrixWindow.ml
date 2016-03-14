@@ -44,16 +44,16 @@ open QT5
 let foo _ = Printf.printf "start callback\n%!"
 
 class tetrixWindow () =
-  let createLabel text =
-    let label = new OLabel.qLabel ~text ()
+  let nextPieceLabel =
+    let label = new OLabel.qLabel ()
     in
-    label#setAlignment (QT5.Qt.AlignHCenter, Qt.AlignBottom);
+    label#setFrameStyle ~shadow:OFrame.Raised ~shape:OFrame.Box ();
+    label#setAlignment Qt.alignCenter;
     label
   in
 object(self)
   inherit OWidget.qWidget ()
-  val board = new TetrixBoard.tetrixBoard
-  val nextPieceLabel = new OLabel.qLabel ()
+  val board = new TetrixBoard.tetrixBoard nextPieceLabel
   val scoreLcd = new OLCDNumber.qLCDNumber 5
   val levelLcd = new OLCDNumber.qLCDNumber 2
   val linesLcd = new OLCDNumber.qLCDNumber 5
@@ -61,9 +61,6 @@ object(self)
   val quitButton = new OPushButton.qPushButton "&Quit"
   val pauseButton = new OPushButton.qPushButton "&Pause"
   initializer
-    nextPieceLabel#setFrameStyle ~shadow:OFrame.Raised ~shape:OFrame.Box ();
-    nextPieceLabel#setAlignment Qt.alignCenter;
-    board#setNextPieceLabel nextPieceLabel;
     scoreLcd#setSegmentStyle OLCDNumber.Filled;
     levelLcd#setSegmentStyle OLCDNumber.Filled;
     linesLcd#setSegmentStyle OLCDNumber.Filled;
@@ -76,7 +73,12 @@ object(self)
     board#scoreChanged#connect scoreLcd#display;
     board#levelChanged#connect levelLcd#display;
     board#linesRemovedChanged#connect linesLcd#display;
-    let layout = new OGridLayout.qGridLayout ()
+    let layout = new OGridLayout.qGridLayout () in
+    let createLabel text =
+      let label = new OLabel.qLabel ~text ()
+      in
+      label#setAlignment (QT5.Qt.AlignHCenter, Qt.AlignBottom);
+      label
     in
     layout#addWidgetAt (createLabel "NEXT") 0 0;
     layout#addWidgetAt nextPieceLabel 1 0;
