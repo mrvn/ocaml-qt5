@@ -22,6 +22,15 @@ extern "C" value caml_mrvn_QT5_OApplication_exec() {
   CAMLreturn(Val_int(QApplication::exec()));
 }
 
+extern "C" value caml_mrvn_QT5_OApplication_quit(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QApplication *app = dynamic_cast<QApplication *>(obj);
+    assert((app != nullptr) && "not mixed with QApplication");
+    app->quit();
+    CAMLreturn(Val_unit);
+}
+
 extern "C" value caml_mrvn_QT5_OApplication_make(value ml_args) {
   CAMLparam1(ml_args);
   fprintf(stderr, "%s(0x%lx)\n", __PRETTY_FUNCTION__, ml_args);

@@ -41,7 +41,9 @@
 
 open QT5
 
-class tetrixWindow =
+let foo _ = Printf.printf "start callback\n%!"
+
+class tetrixWindow () =
   let createLabel text =
     let label = new OLabel.qLabel ~text ()
     in
@@ -58,29 +60,22 @@ object(self)
   val startButton = new OPushButton.qPushButton "&Start"
   val quitButton = new OPushButton.qPushButton "&Quit"
   val pauseButton = new OPushButton.qPushButton "&Pause"
-    
   initializer
     nextPieceLabel#setFrameStyle ~shadow:OFrame.Raised ~shape:OFrame.Box ();
     nextPieceLabel#setAlignment Qt.alignCenter;
-    (*
-    board->setNextPieceLabel(nextPieceLabel);
-    *)
+    board#setNextPieceLabel nextPieceLabel;
     scoreLcd#setSegmentStyle OLCDNumber.Filled;
     levelLcd#setSegmentStyle OLCDNumber.Filled;
     linesLcd#setSegmentStyle OLCDNumber.Filled;
     startButton#setFocusPolicy Qt.NoFocus;
     quitButton#setFocusPolicy  Qt.NoFocus;
     pauseButton#setFocusPolicy Qt.NoFocus;
-
-    (*
-    connect(startButton, SIGNAL(clicked()), board, SLOT(start()));
-    connect(quitButton , SIGNAL(clicked()), qApp, SLOT(quit()));
-    connect(pauseButton, SIGNAL(clicked()), board, SLOT(pause()));
-    connect(board, SIGNAL(scoreChanged(int)), scoreLcd, SLOT(display(int)));
-    connect(board, SIGNAL(levelChanged(int)), levelLcd, SLOT(display(int)));
-    connect(board, SIGNAL(linesRemovedChanged(int)),
-            linesLcd, SLOT(display(int)));
-    *)
+    let _ = startButton#clicked#connect (fun _ -> Printf.printf "start callback\n%!"; board#start) in
+    let _ = pauseButton#clicked#connect (fun _ -> Printf.printf "pause callback\n%!"; board#pause)
+    in
+    board#scoreChanged#connect scoreLcd#display;
+    board#levelChanged#connect levelLcd#display;
+    board#linesRemovedChanged#connect linesLcd#display;
     let layout = new OGridLayout.qGridLayout ()
     in
     layout#addWidgetAt (createLabel "NEXT") 0 0;
@@ -98,4 +93,5 @@ object(self)
     self#setLayout layout;
     self#setWindowTitle "Tetrix";
     self#resize (550, 370)
+  method quitClicked = quitButton#clicked
 end

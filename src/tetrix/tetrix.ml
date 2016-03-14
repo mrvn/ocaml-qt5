@@ -42,7 +42,8 @@
 open QT5
 
 let app = new OApplication.qApplication Sys.argv
-let win = new TetrixWindow.tetrixWindow
+let win = new TetrixWindow.tetrixWindow ()
+let _ = win#quitClicked#connect (fun _ -> app#quit)
 let () = win#show
 let () =
   (*

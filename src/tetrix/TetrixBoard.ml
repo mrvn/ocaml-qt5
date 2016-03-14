@@ -41,49 +41,36 @@
 
 open QT5
 
-class tetrixBoard = object
-  inherit OWidget.qWidget ()
+class ['a] signal = object
+  val mutable callbacks = ([] : ('a -> unit) list)
+  method connect callback = callbacks <- callback :: callbacks
+  method emit x = List.iter (fun callback -> callback x) callbacks
 end
   
+class tetrixBoard =
+  let boardWidth = 10 in
+  let boardHeight = 22
+  in
+object
+  inherit OFrame.qFrame ()
+  val scoreChanged = new signal
+  val levelChanged = new signal
+  val linesRemovedChanged = new signal
+  method setNextPieceLabel : 'a . (<as_oLabel : OLabel.oLabel; ..> as 'a) -> unit = fun label -> ()
 (*
-#ifndef TETRIXBOARD_H
-#define TETRIXBOARD_H
-
-#include <QBasicTimer>
-#include <QFrame>
-#include <QPointer>
-
-#include "tetrixpiece.h"
-
-class QLabel;
-
-class TetrixBoard : public QFrame
-{
-    Q_OBJECT
-
-public:
-    TetrixBoard(QWidget *parent = 0);
-
-    void setNextPieceLabel(QLabel *label);
     QSize sizeHint() const Q_DECL_OVERRIDE;
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
-
-public slots:
-    void start();
-    void pause();
-
-signals:
-    void scoreChanged(int score);
-    void levelChanged(int level);
-    void linesRemovedChanged(int numLines);
-
-protected:
+*)
+  method start = ()
+  method pause = ()
+  method scoreChanged = (scoreChanged : int signal)
+  method levelChanged = (levelChanged : int signal)
+  method linesRemovedChanged = (linesRemovedChanged : int signal)
+(*
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
-
 private:
-    enum { BoardWidth = 10, BoardHeight = 22 };
 
     TetrixShape &shapeAt(int x, int y) { return board[(y * BoardWidth) + x]; }
     int timeoutTime() { return 1000 / (1 + level); }
@@ -113,7 +100,5 @@ private:
     int score;
     int level;
     TetrixShape board[BoardWidth * BoardHeight];
-};
-
-#endif
 *)
+end

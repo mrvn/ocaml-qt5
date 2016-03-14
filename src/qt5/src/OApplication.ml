@@ -10,6 +10,13 @@ class oApplication obj = object(self)
     end) : External with type e = unit -> int)
     in
     E.stub ()
+  method quit =
+    let module E = (val (module struct
+      type e = oApplication OClass.t  -> unit
+      external stub : oApplication OClass.t -> unit = "caml_mrvn_QT5_OApplication_quit"
+    end) : External with type e = oApplication OClass.t  -> unit)
+    in
+    E.stub self#as_oApplication#obj
 end
 
 type t = oApplication OClass.t
