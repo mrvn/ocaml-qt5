@@ -46,7 +46,7 @@ extern "C" value caml_mrvn_QT5_OWidget_show(OClass *obj) {
 
 extern "C" value caml_mrvn_QT5_OWidget_resize(OClass *obj, value ml_x, value ml_y) {
     CAMLparam2(ml_x, ml_y);
-    fprintf(stderr, "%s(%d, %d)\n", __PRETTY_FUNCTION__, Int_val(ml_x), Int_val(ml_y));
+    fprintf(stderr, "%s(%p, %d, %d)\n", __PRETTY_FUNCTION__, obj, Int_val(ml_x), Int_val(ml_y));
     QWidget *widget = dynamic_cast<QWidget *>(obj);
     assert((widget != nullptr) && "OWidget not mixed with QWidget");
     widget->resize(Int_val(ml_x), Int_val(ml_y));
@@ -55,7 +55,7 @@ extern "C" value caml_mrvn_QT5_OWidget_resize(OClass *obj, value ml_x, value ml_
 
 extern "C" value caml_mrvn_QT5_OWidget_setWindowTitle(OClass *obj, value ml_text) {
     CAMLparam1(ml_text);
-    fprintf(stderr, "%s(\"%s\")\n", __PRETTY_FUNCTION__, String_val(ml_text));
+    fprintf(stderr, "%s(%p, \"%s\")\n", __PRETTY_FUNCTION__, obj, String_val(ml_text));
     QString text(String_val(ml_text));
     QWidget *widget = dynamic_cast<QWidget *>(obj);
     assert((widget != nullptr) && "OWidget not mixed with QWidget");
@@ -76,7 +76,7 @@ extern "C" value caml_mrvn_QT5_OWidget_setLayout(OClass *obj, OClass *layout) {
 
 extern "C" value caml_mrvn_QT5_OWidget_setFocusPolicy(OClass *obj, value ml_focus) {
     CAMLparam1(ml_focus);
-    fprintf(stderr, "%s(0x%x)\n", __PRETTY_FUNCTION__, Int_val(ml_focus));
+    fprintf(stderr, "%s(%p, 0x%x)\n", __PRETTY_FUNCTION__, obj, Int_val(ml_focus));
     QWidget *widget = dynamic_cast<QWidget *>(obj);
     assert((widget != nullptr) && "not mixed with QWidget");
     widget->setFocusPolicy((Qt::FocusPolicy)Int_val(ml_focus));
