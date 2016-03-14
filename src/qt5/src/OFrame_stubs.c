@@ -1,7 +1,6 @@
 #include <QFrame>
 
 #include "OFrame.h"
-#include "Signal.h"
 
 #include <stdio.h>
 #include <caml/mlvalues.h>

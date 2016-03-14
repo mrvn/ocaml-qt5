@@ -39,6 +39,8 @@
 ****************************************************************************)
 (* Modified for ocaml by Goswin von Brederlow                              *)
 
+open QT5
+
 let app = new OApplication.qApplication Sys.argv
 let win = new TetrixWindow.tetrixWindow
 let () = win#show

@@ -39,6 +39,8 @@
 ****************************************************************************)
 (* Modified for ocaml by Goswin von Brederlow                              *)
 
+open QT5
+
 class tetrixBoard = object
   inherit OWidget.qWidget ()
 end

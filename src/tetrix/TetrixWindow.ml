@@ -39,22 +39,22 @@
 ****************************************************************************)
 (* Modified for ocaml by Goswin von Brederlow                              *)
 
+open QT5
+
 class tetrixWindow =
   let createLabel text =
     let label = new OLabel.qLabel ~text ()
     in
-    label#setAlignment (Qt.AlignHCenter, Qt.AlignBottom);
+    label#setAlignment (QT5.Qt.AlignHCenter, Qt.AlignBottom);
     label
   in
 object(self)
   inherit OWidget.qWidget ()
   val board = new TetrixBoard.tetrixBoard
   val nextPieceLabel = new OLabel.qLabel ()
-    (*
-  val scoreLcd = oLCDNumber.qLCDNumber 5
-  val levelLcd = oLCDNumber.qLCDNumber 2
-  val linesLcd = oLCDNumber.qLCDNumber 5
-    *)
+  val scoreLcd = new OLCDNumber.qLCDNumber 5
+  val levelLcd = new OLCDNumber.qLCDNumber 2
+  val linesLcd = new OLCDNumber.qLCDNumber 5
   val startButton = new OPushButton.qPushButton "&Start"
   val quitButton = new OPushButton.qPushButton "&Quit"
   val pauseButton = new OPushButton.qPushButton "&Pause"
@@ -64,11 +64,11 @@ object(self)
     nextPieceLabel#setAlignment Qt.alignCenter;
     (*
     board->setNextPieceLabel(nextPieceLabel);
-
-    scoreLcd->setSegmentStyle(QLCDNumber::Filled);
-    levelLcd->setSegmentStyle(QLCDNumber::Filled);
-    linesLcd->setSegmentStyle(QLCDNumber::Filled);
-
+    *)
+    scoreLcd#setSegmentStyle OLCDNumber.Filled;
+    levelLcd#setSegmentStyle OLCDNumber.Filled;
+    linesLcd#setSegmentStyle OLCDNumber.Filled;
+    (*
     startButton->setFocusPolicy(Qt::NoFocus);
     quitButton->setFocusPolicy(Qt::NoFocus);
     pauseButton->setFocusPolicy(Qt::NoFocus);
@@ -86,13 +86,13 @@ object(self)
     layout#addWidgetAt (createLabel "NEXT") 0 0;
     layout#addWidgetAt nextPieceLabel 1 0;
     layout#addWidgetAt (createLabel "LEVEL") 2 0;
-(*    layout#addWidgetAt levelLcd 3 0; *)
+    layout#addWidgetAt levelLcd 3 0;
     layout#addWidgetAt startButton 4 0;
-(*    layout#addWidgetAt board ~rowSpan=6 0 1; *)
+    layout#addWidgetAt board ~rowSpan:6 0 1;
     layout#addWidgetAt (createLabel "SCORE") 0 2;
-(*    layout#addWidgetAt scoreLcd 1 2; *)
+    layout#addWidgetAt scoreLcd 1 2;
     layout#addWidgetAt (createLabel "LINES REMOVED") 2 2;
-(*    layout#addWidgetAt linesLcd 3 2; *)
+    layout#addWidgetAt linesLcd 3 2;
     layout#addWidgetAt quitButton 4 2;
     layout#addWidgetAt pauseButton 5 2;
     self#setLayout layout;
