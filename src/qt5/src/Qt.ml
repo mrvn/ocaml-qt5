@@ -13,3 +13,11 @@ type alignemntVertical =
 let alignCenter = (AlignHCenter, AlignVCenter)
 let alignLeading = AlignLeft
 let alignTrailing = AlignRight
+
+type focusPolicy =
+| TabFocus
+| ClickFocus
+| StrongFocus
+| WheelFocus
+| NoFocus
+

@@ -1,7 +1,6 @@
 include OWidget_OLayout
 
 type t = oWidget OClass.t
-
 module type Make = sig
   val stub : unit -> #oWidget OClass.t
 end

@@ -68,11 +68,11 @@ object(self)
     scoreLcd#setSegmentStyle OLCDNumber.Filled;
     levelLcd#setSegmentStyle OLCDNumber.Filled;
     linesLcd#setSegmentStyle OLCDNumber.Filled;
-    (*
-    startButton->setFocusPolicy(Qt::NoFocus);
-    quitButton->setFocusPolicy(Qt::NoFocus);
-    pauseButton->setFocusPolicy(Qt::NoFocus);
+    startButton#setFocusPolicy Qt.NoFocus;
+    quitButton#setFocusPolicy  Qt.NoFocus;
+    pauseButton#setFocusPolicy Qt.NoFocus;
 
+    (*
     connect(startButton, SIGNAL(clicked()), board, SLOT(start()));
     connect(quitButton , SIGNAL(clicked()), qApp, SLOT(quit()));
     connect(pauseButton, SIGNAL(clicked()), board, SLOT(pause()));

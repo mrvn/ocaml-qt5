@@ -31,6 +31,21 @@ class oWidget obj = object(self)
     end) : External with type e = oWidget OClass.t -> unit)
     in
     E.stub self#as_oWidget#obj
+  method setFocusPolicy focus =
+    let module E = (val (module struct
+      type e = oWidget OClass.t -> int -> unit
+      external stub : oWidget OClass.t -> int -> unit = "caml_mrvn_QT5_OWidget_setFocusPolicy"
+    end) : External with type e = oWidget OClass.t -> int -> unit)
+    in
+    let t =
+      match focus with
+      | Qt.TabFocus    -> 0x1
+      | Qt.ClickFocus  -> 0x2
+      | Qt.StrongFocus -> 0xB
+      | Qt.WheelFocus  -> 0xF
+      | Qt.NoFocus     -> 0x0
+    in
+    E.stub self#as_oWidget#obj t
 end
 
 and oLayout obj = object(self)

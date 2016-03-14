@@ -73,3 +73,12 @@ extern "C" value caml_mrvn_QT5_OWidget_setLayout(OClass *obj, OClass *layout) {
     w->setLayout(x);
     CAMLreturn(Val_unit);
 }
+
+extern "C" value caml_mrvn_QT5_OWidget_setFocusPolicy(OClass *obj, value ml_focus) {
+    CAMLparam1(ml_focus);
+    fprintf(stderr, "%s(0x%x)\n", __PRETTY_FUNCTION__, Int_val(ml_focus));
+    QWidget *widget = dynamic_cast<QWidget *>(obj);
+    assert((widget != nullptr) && "not mixed with QWidget");
+    widget->setFocusPolicy((Qt::FocusPolicy)Int_val(ml_focus));
+    CAMLreturn(Val_unit);
+}
