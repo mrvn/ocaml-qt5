@@ -36,7 +36,12 @@ public:
 	fprintf(stderr, "%p->%s(obj = %p, fn = %p)\n", this, __PRETTY_FUNCTION__, obj, (void*)fn_);
 	O *o = dynamic_cast<O*>(obj);
 	assert(o != nullptr);
-	return QObject::connect(o, fn_, [closure](A arg) { fprintf(stderr, "triggered\n"); call2(closure, arg);});
+	// FIXME: attach to object for disconnect and destruction
+	value *closurep = new value();
+	assert(closurep != nullptr);
+	*closurep = closure;
+	caml_register_generational_global_root(closurep);
+	return QObject::connect(o, fn_, [closurep](A arg) { fprintf(stderr, "triggered: closure = 0x%lx, arg = %s\n", *closurep, arg ? "true" : "false"); call2(*closurep, arg);});
     }
 private:
     void (O::*fn_)(A);
