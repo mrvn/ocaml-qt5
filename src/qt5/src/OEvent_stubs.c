@@ -21,3 +21,8 @@ void OEvent::removeEvent() {
     event_ = nullptr;
     decr();
 }
+
+QEvent * OEvent::event() const {
+    fprintf(stderr, "%s: %p\n", __PRETTY_FUNCTION__, event_);
+    return event_;
+}

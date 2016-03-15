@@ -39,8 +39,8 @@ OClass::~OClass() {
 }
 
 void OClass::register_obj(value ml_obj) {
-    fprintf(stderr, "%p [0x%lx]->%s(0x%lx)\n", this, maybe_obj(), __PRETTY_FUNCTION__, ml_obj);
     assert((ml_obj_ == 0) && "registered twice");
+    fprintf(stderr, "%p [0x%lx]->%s(0x%lx)\n", this, maybe_obj(), __PRETTY_FUNCTION__, ml_obj);
     ml_obj_ = ml_obj;
     caml_register_generational_global_root(&ml_obj_);
     incr();

@@ -36,7 +36,8 @@ bool OObject::event(QEvent *event) {
 	    //fprintf(stderr, "  oEvent = %p\n", oEvent);
 	    assert(oEvent != nullptr);
 	    fprintf(stderr, "%s: calling 0x%lx\n", __PRETTY_FUNCTION__, handleEvent);
-	    res = caml_callback2_exn(handleEvent, obj, (value)oEvent);
+            OClass *e = dynamic_cast<OClass *>(oEvent);
+	    res = caml_callback2_exn(handleEvent, obj, (value)e);
 	    if (Is_exception_result(res)) {
 		// on exception pass event upstream
 		res = Extract_exception(res);

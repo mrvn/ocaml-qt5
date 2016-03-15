@@ -9,14 +9,32 @@ License: LGPL
 Homepage: htps://github.com/mrvn/ocaml-qt5
 Plugins: META (0.4), StdFiles (0.4), DevFiles (0.4)
 BuildTools: ocamlbuild
+#OCamlVersion: >= 4.02
+#FilesAB:      lib/META.ab
+
+#PreInstallCommand:   $ocamlfind install ppx_external_mathod lib/META
+#PreUninstallCommand: $ocamlfind remove ppx_external_method
+#
+#Executable ppx_external_method
+#  Path:           lib
+#  BuildDepends:   compiler-libs.common
+#  MainIs:         ppx_external_method.ml
+#  CompiledObject: best
+#
+#Executable foo
+#  Path:           lib
+#  MainIs:         foo.ml
+#  CompiledObject: best
+#  ByteOpt: -ppx lib/ppx_external_method.native
+#  NativeOpt: -ppx lib/ppx_external_method.native
 
 Library QT5
   Path: src/qt5
   Build: true
   Install: true
   Pack: true
-  Modules: src/External, src/OClass, src/Connection, src/Signal, src/OEvent, src/OObject, src/OApplication, src/Qt, src/OLayoutItem, src/OWidget_OLayout, src/OLayout, src/OWidget, src/OMainWindow, src/OAbstractButton, src/OPushButton, src/OFrame, src/OLabel, src/OGridLayout, src/OLCDNumber
-  CSources: src/caml_weak.h, src/OClass.h, src/Connection.h, src/Connection_stubs.c, src/Signal.h, src/Signal_stubs.c, src/OClass_stubs.c, src/OEvent.h, src/OEvent_stubs.c, src/OObject.h, src/OObject_stubs.c, src/StringArray.h, src/StringArray.c, src/OApplication.h, src/OApplication_stubs.c, src/OLayoutItem.h, src/OLayoutItem_stubs.c, src/OLayout.h, src/OLayout_stubs.c, src/OWidget.h, src/OWidget_stubs.c, src/OMainWindow.h, src/OMainWindow_stubs.c, src/OAbstractButton.h, src/OAbstractButton_stubs.c, src/OPushButton.h, src/OPushButton_stubs.c, src/OFrame.h, src/OFrame_stubs.c, src/OLabel.h, src/OLabel_stubs.c, src/OGridLayout.h, src/OGridLayout_stubs.c, src/OLCDNumber.h, src/OLCDNumber_stubs.c
+  Modules: src/External, src/OClass, src/Connection, src/Signal, src/OEvent, src/OPaintEvent, src/OObject, src/OApplication, src/Qt, src/OLayoutItem, src/OWidget_OLayout, src/OLayout, src/OWidget, src/OMainWindow, src/OAbstractButton, src/OPushButton, src/OFrame, src/OLabel, src/OGridLayout, src/OLCDNumber
+  CSources: src/caml_weak.h, src/OClass.h, src/Connection.h, src/Connection_stubs.c, src/Signal.h, src/Signal_stubs.c, src/OClass_stubs.c, src/OEvent.h, src/OEvent_stubs.c, src/OPaintEvent.h, src/OPaintEvent_stubs.c, src/OObject.h, src/OObject_stubs.c, src/StringArray.h, src/StringArray.c, src/OApplication.h, src/OApplication_stubs.c, src/OLayoutItem.h, src/OLayoutItem_stubs.c, src/OLayout.h, src/OLayout_stubs.c, src/OWidget.h, src/OWidget_stubs.c, src/OMainWindow.h, src/OMainWindow_stubs.c, src/OAbstractButton.h, src/OAbstractButton_stubs.c, src/OPushButton.h, src/OPushButton_stubs.c, src/OFrame.h, src/OFrame_stubs.c, src/OLabel.h, src/OLabel_stubs.c, src/OGridLayout.h, src/OGridLayout_stubs.c, src/OLCDNumber.h, src/OLCDNumber_stubs.c
 # pkg-config --cflags Qt5Widgets
   CCOpt: -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5 -x c++ -std=gnu++14 -Wno-pmf-conversions -O2 -W -Wall -fno-inline
 # pkg-config --libs Qt5Widgets

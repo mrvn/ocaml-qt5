@@ -49,81 +49,88 @@ type tetrixShape =
 | LShape
 | MirroredLShape
 
-class tetrixPiece = object(self)
-  val mutable pieceShape = NoShape
-  val coords = [| [| 0;  0|]; [| 0;  0|]; [| 0;  0|]; [| 0;  0|]; |]
-  initializer self#setShape NoShape
-  method as_self = (self :> tetrixPiece)
-  method setRandomShape =
-    self#setShape
-      (match Random.int 7 with
-      | 0 -> ZShape
-      | 1 -> SShape
-      | 2 -> LineShape
-      | 3 -> TShape
-      | 4 -> SquareShape
-      | 5 -> LShape
-      | _ -> MirroredLShape)
-  method setShape shape =
-    Array.iteri
-      (fun i t -> coords.(i) <- Array.copy t)
-      (match shape with
-      | NoShape        -> [| [| 0;  0|]; [| 0;  0|]; [| 0;  0|]; [| 0;  0|]; |]
-      | ZShape         -> [| [| 0; -1|]; [| 0;  0|]; [|-1;  0|]; [|-1;  1|]; |]
-      | SShape         -> [| [| 0; -1|]; [| 0;  0|]; [| 1;  0|]; [| 1;  1|]; |]
-      | LineShape      -> [| [| 0; -1|]; [| 0;  0|]; [| 0;  1|]; [| 0;  2|]; |]
-      | TShape         -> [| [|-1;  0|]; [| 0;  0|]; [| 1;  0|]; [| 0;  1|]; |]
-      | SquareShape    -> [| [| 0;  0|]; [| 1;  0|]; [| 0;  1|]; [| 1;  1|]; |]
-      | LShape         -> [| [|-1; -1|]; [| 0; -1|]; [| 0;  0|]; [| 0;  1|]; |]
-      | MirroredLShape -> [| [| 1; -1|]; [| 0; -1|]; [| 0;  0|]; [| 0;  1|]; |]);
-    pieceShape <- shape
-  method shape = pieceShape
-  method x index = coords.(index).(0)
-  method y index = coords.(index).(1)
-  method minX =
-    Array.fold_left
-      (fun res t -> min res t.(0))
-      coords.(0).(0)
-      coords
-  method maxX =
-    Array.fold_left
-      (fun res t -> max res t.(0))
-      coords.(0).(0)
-      coords
-  method minY =
-    Array.fold_left
-      (fun res t -> min res t.(1))
-      coords.(0).(1)
-      coords
-  method maxY =
-    Array.fold_left
-      (fun res t -> max res t.(1))
-      coords.(0).(1)
-      coords
-  method rotatedLeft =
-    if pieceShape = SquareShape
-    then self#as_self
-    else
-      let result = new tetrixPiece
-      in
-      result#setShape pieceShape;
-      for i = 0 to 3 do
-        result#setX i (self#y i);
-        result#setY i (-self#x i);
-      done;
-      result
-  method rotatedRight =
-    if pieceShape = SquareShape
-    then self#as_self
-    else
-      let result = new tetrixPiece
-      in
-      result#setShape pieceShape;
-      for i = 0 to 3 do
-        result#setX i (-self#y i);
-        result#setY i (self#x i);
-      done;
-      result
-  method setX index x = coords.(index).(0) <- x
-  method setY index y = coords.(index).(1) <- y
-end
+type tetrixPiece = {
+  color : int;
+  coords : (int * int) array;
+}
+
+let noShape = {
+  color = 0x000000;
+  coords = [| (0, 0); (0, 0); (0, 0); (0, 0); |];
+}
+
+let zShape = {
+  color = 0xCC6666;
+  coords = [| ( 0, -1); ( 0,  0); (-1,  0); (-1,  1); |];
+}
+
+let sShape = {
+  color = 0x66CC66;
+  coords = [| ( 0, -1); ( 0,  0); ( 1,  0); ( 1,  1); |];
+}
+
+let lineShape = {
+  color = 0x6666CC;
+  coords = [| ( 0, -1); ( 0,  0); ( 0,  1); ( 0,  2); |];
+}
+
+let tShape = {
+  color = 0xCCCC66;
+  coords = [| (-1,  0); ( 0,  0); ( 1,  0); ( 0,  1); |];
+}
+
+let squareShape = {
+  color = 0xCC66CC;
+  coords = [| ( 0,  0); ( 1,  0); ( 0,  1); ( 1,  1); |];
+}
+
+let lShape = {
+  color = 0x66CCCC;
+  coords = [| (-1, -1); ( 0, -1); ( 0,  0); ( 0,  1); |];
+}
+
+let mirroredLShape = {
+  color = 0xDAAA00;
+  coords = [| ( 1, -1); ( 0, -1); ( 0,  0); ( 0,  1); |];
+}
+
+let shapes =
+  [|
+    noShape;
+    zShape;
+    sShape;
+    lineShape;
+    tShape;
+    squareShape;
+    lShape;
+    mirroredLShape;
+  |]
+
+let randomShape () =
+  shapes.(Random.int 7)
+
+let xy t index = t.coords.(index)
+
+let minXY t =
+  Array.fold_left
+    (fun (x, y) (u, v) -> (min x u, min y v))
+    (0, 0)
+    t.coords
+
+let maxXY t =
+  Array.fold_left
+    (fun (x, y) (u, v) -> (max x u, max y v))
+    (0, 0)
+    t.coords
+
+let rotatedLeft t =
+  {
+    t with
+      coords = Array.map (fun (x, y) -> (y, -x)) t.coords;
+  }
+  
+let rotatedRight t =
+  {
+    t with
+      coords = Array.map (fun (x, y) -> (-y, x)) t.coords;
+  }

@@ -40,6 +40,13 @@ class oFrame obj = object(self)
       | WinPanel    -> 0x0003
     in
     E.stub self#as_oFrame#obj style
+  method frameWidth =
+    let module E = (val (module struct
+      type e = oFrame OClass.t -> int
+      external stub : oFrame OClass.t -> int = "caml_mrvn_QT5_OFrame_frameWidth"
+    end) : External with type e = oFrame OClass.t -> int)
+    in
+    E.stub self#as_oFrame#obj
 end
 
 type t = oFrame OClass.t

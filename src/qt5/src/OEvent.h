@@ -10,11 +10,12 @@
 
 class QEvent;
 
-class OEvent : public virtual OClass {
+class OEvent : public OClass {
 public:
     OEvent(QEvent *event);
     virtual ~OEvent();
     void removeEvent();
+    QEvent * event() const;
 private:
     QEvent *event_;
 };

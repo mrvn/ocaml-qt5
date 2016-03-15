@@ -6,9 +6,11 @@
 #include <stdio.h>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
+#include <caml/callback.h>
 #include <cassert>
 
 #include "OLayout.h"
+#include "OPaintEvent.h"
 
 OWidget::OWidget() {
     fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
@@ -27,6 +29,56 @@ void OWidget::setLayout(OLayout *layout) {
     assert((q != nullptr) && "OLayout not mixed with QLayout");
     w->setLayout(q);
 }
+
+void OWidget::paintEvent(QPaintEvent *event) {
+    CAMLparam0();
+    CAMLlocal3(obj, handleEvent, res);
+    static value hash = caml_hash_variant("external_paintEvent");
+    //fprintf(stderr, "%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, event);
+    obj = maybe_obj();
+    if (obj == 0) {
+        qPaintEvent(event); // ocaml object detached
+    } else {
+        handleEvent = caml_get_public_method(obj, hash);
+        //fprintf(stderr, "  handleEvent = 0x%lx\n", handleEvent);
+        if (handleEvent == 0) {
+            qPaintEvent(event); // no override
+        } else {
+            OPaintEvent *oEvent = new OPaintEvent(event);
+            //fprintf(stderr, "  oEvent = %p\n", oEvent);
+            assert(oEvent != nullptr);
+            fprintf(stderr, "%s: calling 0x%lx\n", __PRETTY_FUNCTION__, handleEvent);
+            OClass *e = dynamic_cast<OClass *>(oEvent);
+            res = caml_callback2_exn(handleEvent, obj, (value)e);
+            if (Is_exception_result(res)) {
+                // on exception pass event upstream
+                res = Extract_exception(res);
+                fprintf(stderr, "%s: callback got exception 0x%lx\n", __PRETTY_FUNCTION__, res);
+                assert(false);
+                oEvent->removeEvent();
+                qPaintEvent(event);
+            } else {
+                oEvent->removeEvent();
+                fprintf(stderr, "%s: dispatched\n", __PRETTY_FUNCTION__);
+            }
+        }
+    }
+    CAMLreturn0;
+}
+
+extern "C" value caml_mrvn_QT5_OWidget_qPaintEvent(OClass *obj, OClass *event) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p, %p)\n", __PRETTY_FUNCTION__, obj, event);
+    OWidget *widget = dynamic_cast<OWidget *>(obj);
+    assert((widget != nullptr) && "not an OWidget");
+    OPaintEvent *oEvent = dynamic_cast<OPaintEvent *>(event);
+    assert((oEvent != nullptr) && "not an OPaintEvent");
+    QPaintEvent *e = oEvent->event();
+    assert((e != nullptr) && "QPaintEvent missing");
+    widget->qPaintEvent(e);
+    CAMLreturn(Val_unit);
+}
+
 
 extern "C" value caml_mrvn_QT5_OWidget_make(void) {
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);

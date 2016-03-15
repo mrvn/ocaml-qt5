@@ -62,25 +62,22 @@ object(self)
     QBasicTimer timer;
     *)
   val mutable isWaitingAfterLine = false
-  val curPiece = new TetrixPiece.tetrixPiece
-  val nextPiece = new TetrixPiece.tetrixPiece
+  val curPiece = TetrixPiece.noShape
+  val nextPiece = TetrixPiece.randomShape ()
   val mutable curX = 0
   val mutable curY = 0
   val mutable numLinesRemoved = 0
   val mutable numPiecesDropped = 0
   val mutable score = 0
   val mutable level = 0
-  val board = Array.init (boardWidth * boardHeight) (fun _ -> TetrixPiece.NoShape)
+  val board = Array.init (boardWidth * boardHeight) (fun _ -> TetrixPiece.(noShape.color))
   initializer
     self#setFrameStyle ~shadow:OFrame.Sunken ~shape:OFrame.Panel ();
     self#setFocusPolicy Qt.StrongFocus;
-    nextPiece#setRandomShape
 (*
     QSize sizeHint() const Q_DECL_OVERRIDE;
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
 *)
-  method start = ()
-  method pause = ()
   method scoreChanged = (scoreChanged : int signal)
   method levelChanged = (levelChanged : int signal)
   method linesRemovedChanged = (linesRemovedChanged : int signal)
@@ -98,101 +95,90 @@ private:
   *)
   method private clearBoard =
     for i = 0 to boardHeight * boardWidth - 1 do
-      board.(i) <- TetrixPiece.NoShape;
+      board.(i) <- TetrixPiece.(noShape.color);
     done
+
+  method sizeHint = (boardWidth * 15 + self#frameWidth * 2,
+                     boardHeight * 15 + self#frameWidth * 2)
+  method minimumSizeHint = (boardWidth * 5 + self#frameWidth * 2,
+                            boardHeight * 5 + self#frameWidth * 2)
+
+  method start =
+    if isPaused
+    then ()
+    else begin
+      isStarted <- true;
+      isWaitingAfterLine <- false;
+      numLinesRemoved <- 0;
+      numPiecesDropped <- 0;
+      score <- 0;
+      level <- 1;
+      self#clearBoard;
+
+      linesRemovedChanged#emit numLinesRemoved;
+      scoreChanged#emit score;
+      levelChanged#emit level;
+
+      self#newPiece;
+      (*
+      timer.start(timeoutTime(), this);
+      *)
+    end
+
+  method pause =
+    if isStarted
+    then begin
+      isPaused <- not isPaused;
+      if isPaused
+      then () (* timer#stop *)
+      else (); (* timer#start(timeoutTime(), this); *)
+      self#update;
+    end
+
+  inherit OWidget.paintEvent
+  method paintEvent event =
+    Printf.printf "tetrixBoard.paintEvent\n";
+    self#qPaintEvent event;
+    (*
+    let painter = new OPainter.oPainter self#as_oPaintDevice in
+    let rect = self#contentsRect
+    in
+    if isPaused
+    then painter#drawText rect Qt.alignCenter "Pause"
+    else
+      let boardTop = rect#bottom - boardHeight * self#squareHeight
+      in
+      TetrixPiece.(
+        for i = 0 to boardHeight - 1 do
+          for j = 0 to boardWidth - 1 do
+            let color = self#shapeAt j (boardHeight - i - 1)
+            in
+            if color != noShape.color
+            then
+              self#drawSquare
+                painter
+                (rect#left + j * self#squareWidth)
+                (boardTop + i * self#squareHeight)
+                color;
+          done
+        done;
+        if curPiece.color != noShape.color
+        then
+          for i = 0 to 3 do
+            let (x, y) = xy curPiece i in
+            let (x, y) = (curX + x, curY + y)
+            in 
+            self#drawSquare
+              painter
+              (rect#left + x * self#squareWidth)
+              (boardTop + (boardHeight - y - 1) * self#squareHeight)
+              curPiece.color
+          done)
+    *)
+
+  method newPiece = ()
+  method update = ()
 (*
-    void dropDown();
-    void oneLineDown();
-    void pieceDropped(int dropHeight);
-    void removeFullLines();
-    void newPiece();
-    void showNextPiece();
-    bool tryMove(const TetrixPiece &newPiece, int newX, int newY);
-    void drawSquare(QPainter &painter, int x, int y, TetrixShape shape);
-*)
-end
-(*
-QSize TetrixBoard::sizeHint() const
-{
-    return QSize(BoardWidth * 15 + frameWidth() * 2,
-                 BoardHeight * 15 + frameWidth() * 2);
-}
-
-QSize TetrixBoard::minimumSizeHint() const
-{
-    return QSize(BoardWidth * 5 + frameWidth() * 2,
-                 BoardHeight * 5 + frameWidth() * 2);
-}
-
-void TetrixBoard::start()
-{
-    if (isPaused)
-        return;
-
-    isStarted = true;
-    isWaitingAfterLine = false;
-    numLinesRemoved = 0;
-    numPiecesDropped = 0;
-    score = 0;
-    level = 1;
-    clearBoard();
-
-    emit linesRemovedChanged(numLinesRemoved);
-    emit scoreChanged(score);
-    emit levelChanged(level);
-
-    newPiece();
-    timer.start(timeoutTime(), this);
-}
-
-void TetrixBoard::pause()
-{
-    if (!isStarted)
-        return;
-
-    isPaused = !isPaused;
-    if (isPaused) {
-        timer.stop();
-    } else {
-        timer.start(timeoutTime(), this);
-    }
-    update();
-}
-
-void TetrixBoard::paintEvent(QPaintEvent *event)
-{
-    QFrame::paintEvent(event);
-
-    QPainter painter(this);
-    QRect rect = contentsRect();
-
-    if (isPaused) {
-        painter.drawText(rect, Qt::AlignCenter, tr("Pause"));
-        return;
-    }
-
-    int boardTop = rect.bottom() - BoardHeight*squareHeight();
-
-    for (int i = 0; i < BoardHeight; ++i) {
-        for (int j = 0; j < BoardWidth; ++j) {
-            TetrixShape shape = shapeAt(j, BoardHeight - i - 1);
-            if (shape != NoShape)
-                drawSquare(painter, rect.left() + j * squareWidth(),
-                           boardTop + i * squareHeight(), shape);
-        }
-    }
-
-    if (curPiece.shape() != NoShape) {
-        for (int i = 0; i < 4; ++i) {
-            int x = curX + curPiece.x(i);
-            int y = curY - curPiece.y(i);
-            drawSquare(painter, rect.left() + x * squareWidth(),
-                       boardTop + (BoardHeight - y - 1) * squareHeight(),
-                       curPiece.shape());
-        }
-    }
-}
-
 void TetrixBoard::keyPressEvent(QKeyEvent *event)
 {
     if (!isStarted || isPaused || curPiece.shape() == NoShape) {
@@ -396,3 +382,4 @@ void TetrixBoard::drawSquare(QPainter &painter, int x, int y, TetrixShape shape)
 }
 
 *)
+end
