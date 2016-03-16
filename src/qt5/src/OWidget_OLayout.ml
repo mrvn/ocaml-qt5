@@ -2,6 +2,7 @@ open External
 
 class oWidget obj = object(self)
   inherit OObject.oObject obj
+  inherit OPaintDevice.oPaintDevice obj
   method as_oWidget = (self :> oWidget)
   method resize (x, y) =
     let module E = (val (module struct

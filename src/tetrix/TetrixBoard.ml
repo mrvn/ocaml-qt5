@@ -139,8 +139,8 @@ private:
   method paintEvent event =
     Printf.printf "tetrixBoard.paintEvent\n";
     self#qPaintEvent event;
+    let painter = new OPainter.qPainter self in
     (*
-    let painter = new OPainter.oPainter self#as_oPaintDevice in
     let rect = self#contentsRect
     in
     if isPaused
@@ -175,6 +175,7 @@ private:
               curPiece.color
           done)
     *)
+    ()
 
   method newPiece = ()
   method update = ()

@@ -7,11 +7,12 @@
 #define MRVN_QT5_OWIDGET_H__INSIDE
 
 #include "OObject.h"
+#include "OPaintDevice.h"
 
 class OLayout;
 class QPaintEvent;
 
-class OWidget : public virtual OObject {
+class OWidget : public virtual OObject, public virtual OPaintDevice {
 public:
     OWidget();
     virtual ~OWidget();
