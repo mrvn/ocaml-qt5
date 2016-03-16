@@ -89,10 +89,8 @@ private:
 *)
   method private shapeAt x y = board.((y * boardWidth) + x)
   method private timeoutTime = 1000 / (1 + level)
-  (*
   method private squareWidth = self#contentsRect#width / boardWidth
   method private squareHeight = self#contentsRect#height / boardHeight
-  *)
   method private clearBoard =
     for i = 0 to boardHeight * boardWidth - 1 do
       board.(i) <- TetrixPiece.(noShape.color);
@@ -145,7 +143,6 @@ private:
     if isPaused
     then painter#drawText rect Qt.alignCenter "Pause"
     else
-      (*
       let boardTop = rect#bottom - boardHeight * self#squareHeight
       in
       TetrixPiece.(
@@ -174,11 +171,10 @@ private:
               (boardTop + (boardHeight - y - 1) * self#squareHeight)
               curPiece.color
           done)
-      *)
-      ()
 
   method newPiece = ()
   method update = ()
+  method drawSquare painter x y color = ()
 (*
 void TetrixBoard::keyPressEvent(QKeyEvent *event)
 {

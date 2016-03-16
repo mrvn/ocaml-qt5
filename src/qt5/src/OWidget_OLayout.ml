@@ -47,7 +47,7 @@ class oWidget obj = object(self)
       | Qt.NoFocus     -> 0x0
     in
     E.stub self#as_oWidget#obj t
-  method contentsRect : ORect.oRect =
+  method contentsRect =
     let module E = (val (module struct
       type e = oWidget OClass.t -> ORect.t
       external stub : oWidget OClass.t -> ORect.t = "caml_mrvn_QT5_OWidget_contentsRect"

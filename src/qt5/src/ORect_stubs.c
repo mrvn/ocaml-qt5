@@ -23,6 +23,70 @@ OQRect::~OQRect() {
     fprintf(stderr, "%p [0x%lx]->%s\n", this, ORect::maybe_obj(), __PRETTY_FUNCTION__);
 }
 
+extern "C" value caml_mrvn_QT5_ORect_x(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QRect *rect = dynamic_cast<QRect *>(obj);
+    assert((rect != nullptr) && "ORect not mixed with QRect");
+    CAMLreturn(Val_int(rect->x()));
+}
+
+extern "C" value caml_mrvn_QT5_ORect_y(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QRect *rect = dynamic_cast<QRect *>(obj);
+    assert((rect != nullptr) && "ORect not mixed with QRect");
+    CAMLreturn(Val_int(rect->y()));
+}
+
+extern "C" value caml_mrvn_QT5_ORect_width(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QRect *rect = dynamic_cast<QRect *>(obj);
+    assert((rect != nullptr) && "ORect not mixed with QRect");
+    CAMLreturn(Val_int(rect->width()));
+}
+
+extern "C" value caml_mrvn_QT5_ORect_height(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QRect *rect = dynamic_cast<QRect *>(obj);
+    assert((rect != nullptr) && "ORect not mixed with QRect");
+    CAMLreturn(Val_int(rect->height()));
+}
+
+extern "C" value caml_mrvn_QT5_ORect_top(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QRect *rect = dynamic_cast<QRect *>(obj);
+    assert((rect != nullptr) && "ORect not mixed with QRect");
+    CAMLreturn(Val_int(rect->top()));
+}
+
+extern "C" value caml_mrvn_QT5_ORect_bottom(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QRect *rect = dynamic_cast<QRect *>(obj);
+    assert((rect != nullptr) && "ORect not mixed with QRect");
+    CAMLreturn(Val_int(rect->bottom()));
+}
+
+extern "C" value caml_mrvn_QT5_ORect_left(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QRect *rect = dynamic_cast<QRect *>(obj);
+    assert((rect != nullptr) && "ORect not mixed with QRect");
+    CAMLreturn(Val_int(rect->left()));
+}
+
+extern "C" value caml_mrvn_QT5_ORect_right(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QRect *rect = dynamic_cast<QRect *>(obj);
+    assert((rect != nullptr) && "ORect not mixed with QRect");
+    CAMLreturn(Val_int(rect->right()));
+}
+
 extern "C" value caml_mrvn_QT5_ORect_make(value ml_x, value ml_y, value ml_w, value ml_h) {
     CAMLparam0();
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
