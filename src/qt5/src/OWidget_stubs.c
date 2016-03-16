@@ -11,6 +11,7 @@
 
 #include "OLayout.h"
 #include "OPaintEvent.h"
+#include "ORect.h"
 
 OWidget::OWidget() {
     fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
@@ -130,7 +131,18 @@ extern "C" value caml_mrvn_QT5_OWidget_setFocusPolicy(OClass *obj, value ml_focu
     CAMLparam1(ml_focus);
     fprintf(stderr, "%s(%p, 0x%x)\n", __PRETTY_FUNCTION__, obj, Int_val(ml_focus));
     QWidget *widget = dynamic_cast<QWidget *>(obj);
-    assert((widget != nullptr) && "not mixed with QWidget");
+    assert((widget != nullptr) && "OWidget not mixed with QWidget");
     widget->setFocusPolicy((Qt::FocusPolicy)Int_val(ml_focus));
     CAMLreturn(Val_unit);
+}
+
+extern "C" value caml_mrvn_QT5_OWidget_contentsRect(OClass *obj) {
+    CAMLparam0();
+    CAMLlocal1(res);
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QWidget *widget = dynamic_cast<QWidget *>(obj);
+    assert((widget != nullptr) && "OWidget not mixed with QWidget");
+    QRect r = widget->contentsRect();
+    res = caml_mrvn_QT5_ORect_make(r.x(), r.y(), r.width(), r.height());
+    CAMLreturn(res);
 }

@@ -140,9 +140,9 @@ private:
     Printf.printf "tetrixBoard.paintEvent\n";
     self#qPaintEvent event;
     let painter = new OPainter.qPainter self in
-    (*
     let rect = self#contentsRect
     in
+    (*
     if isPaused
     then painter#drawText rect Qt.alignCenter "Pause"
     else

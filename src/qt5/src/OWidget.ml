@@ -3,6 +3,7 @@ open External
 include OWidget_OLayout
 
 class virtual paintEvent = object(self)
+  method virtual as_oWidget : oWidget
   method external_paintEvent event =
     self#paintEvent (new OPaintEvent.oPaintEvent event)
   method virtual paintEvent : OPaintEvent.oPaintEvent -> unit
@@ -13,7 +14,6 @@ class virtual paintEvent = object(self)
     end) : External with type e = oWidget OClass.t -> OPaintEvent.t -> unit)
     in
     E.stub self#as_oWidget#obj event#as_oPaintEvent#obj
-  method virtual as_oWidget : oWidget
 end
 
 type t = oWidget OClass.t

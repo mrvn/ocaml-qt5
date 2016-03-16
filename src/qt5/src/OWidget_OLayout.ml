@@ -47,6 +47,13 @@ class oWidget obj = object(self)
       | Qt.NoFocus     -> 0x0
     in
     E.stub self#as_oWidget#obj t
+  method contentsRect : ORect.oRect =
+    let module E = (val (module struct
+      type e = oWidget OClass.t -> ORect.t
+      external stub : oWidget OClass.t -> ORect.t = "caml_mrvn_QT5_OWidget_contentsRect"
+    end) : External with type e = oWidget OClass.t -> ORect.t)
+    in
+    new ORect.oRect (E.stub self#as_oWidget#obj)
 end
 
 and oLayout obj = object(self)
