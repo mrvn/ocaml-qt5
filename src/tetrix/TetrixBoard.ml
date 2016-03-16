@@ -142,10 +142,10 @@ private:
     let painter = new OPainter.qPainter self in
     let rect = self#contentsRect
     in
-    (*
     if isPaused
     then painter#drawText rect Qt.alignCenter "Pause"
     else
+      (*
       let boardTop = rect#bottom - boardHeight * self#squareHeight
       in
       TetrixPiece.(
@@ -174,8 +174,8 @@ private:
               (boardTop + (boardHeight - y - 1) * self#squareHeight)
               curPiece.color
           done)
-    *)
-    ()
+      *)
+      ()
 
   method newPiece = ()
   method update = ()

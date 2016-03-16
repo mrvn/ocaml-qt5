@@ -29,3 +29,14 @@ extern "C" value caml_mrvn_QT5_OPainter_make(OClass *device) {
     assert(obj != nullptr);
     CAMLreturn(value(static_cast<OClass *>(obj)));
 }
+
+extern "C" value caml_mrvn_QT5_OPainter_drawText(OClass *obj, OClass *rect, value ml_align, value ml_text) {
+    CAMLparam2(ml_align, ml_text);
+    fprintf(stderr, "%s(%p, %p, %d, '%s')\n", __PRETTY_FUNCTION__, obj, rect, Int_val(ml_align), String_val(ml_text));
+    QPainter *painter = dynamic_cast<QPainter *>(obj);
+    assert((painter != nullptr) && "OPainter not mixed with QPainter");
+    QRect *r = dynamic_cast<QRect *>(rect);
+    assert((r != nullptr) && "ORect not mixed with QRect");
+    painter->drawText(*r, (Qt::AlignmentFlag)Int_val(ml_align), String_val(ml_text));
+    CAMLreturn(Val_unit);
+}
