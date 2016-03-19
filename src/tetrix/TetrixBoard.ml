@@ -62,8 +62,8 @@ object(self)
     QBasicTimer timer;
     *)
   val mutable isWaitingAfterLine = false
-  val curPiece = TetrixPiece.noShape
-  val nextPiece = TetrixPiece.randomShape ()
+  val mutable curPiece = TetrixPiece.noShape
+  val mutable nextPiece = TetrixPiece.randomShape ()
   val mutable curX = 0
   val mutable curY = 0
   val mutable numLinesRemoved = 0
@@ -88,6 +88,7 @@ object(self)
 private:
 *)
   method private shapeAt x y = board.((y * boardWidth) + x)
+  method private setShapeAt x y c = board.((y * boardWidth) + x) <- c
   method private timeoutTime = 1000 / (1 + level)
   method private squareWidth = self#contentsRect#width / boardWidth
   method private squareHeight = self#contentsRect#height / boardHeight
@@ -172,9 +173,6 @@ private:
               curPiece.color
           done)
 
-  method newPiece = ()
-  method update = ()
-  method drawSquare painter x y color = ()
 (*
 void TetrixBoard::keyPressEvent(QKeyEvent *event)
 {
@@ -221,110 +219,109 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
         QFrame::timerEvent(event);
     }
 }
+*)
+  method dropDown =
+    let rec loop dropHeight = function
+      | 0 -> dropHeight
+      | newY ->
+        if self#tryMove curPiece curX (newY - 1)
+        then loop (dropHeight + 1) (newY - 1)
+        else dropHeight
+    in
+    let dropHeight = loop 0 curY
+    in
+    self#pieceDropped dropHeight
 
-void TetrixBoard::dropDown()
-{
-    int dropHeight = 0;
-    int newY = curY;
-    while (newY > 0) {
-        if (!tryMove(curPiece, curX, newY - 1))
-            break;
-        --newY;
-        ++dropHeight;
-    }
-    pieceDropped(dropHeight);
-}
+  method oneLineDown =
+    if not (self#tryMove curPiece curX (curY - 1))
+    then self#pieceDropped 0
 
-void TetrixBoard::oneLineDown()
-{
-    if (!tryMove(curPiece, curX, curY - 1))
-        pieceDropped(0);
-}
+  method pieceDropped dropHeight =
+    for i = 0 to 3 do
+      let (x, y) = TetrixPiece.xy curPiece i in
+      let (x, y) = (x + curX, y + curY)
+      in
+      self#setShapeAt x y curPiece.TetrixPiece.color
+    done;
 
-void TetrixBoard::pieceDropped(int dropHeight)
-{
-    for (int i = 0; i < 4; ++i) {
-        int x = curX + curPiece.x(i);
-        int y = curY - curPiece.y(i);
-        shapeAt(x, y) = curPiece.shape();
-    }
+    numPiecesDropped <- numPiecesDropped + 1;
+    if numPiecesDropped mod 25 == 0
+    then begin
+      level <- level + 1;
+      (* timer.start(timeoutTime(), this); *)
+      levelChanged#emit level;
+    end;
 
-    ++numPiecesDropped;
-    if (numPiecesDropped % 25 == 0) {
-        ++level;
-        timer.start(timeoutTime(), this);
-        emit levelChanged(level);
-    }
+    score <- score + dropHeight + 7;
+    scoreChanged#emit score;
+    self#removeFullLines;
 
-    score += dropHeight + 7;
-    emit scoreChanged(score);
-    removeFullLines();
+    if not isWaitingAfterLine
+    then self#newPiece
 
-    if (!isWaitingAfterLine)
-        newPiece();
-}
+  method removeFullLines =
+    let numFullLines = ref 0
+    in
+    for i = boardHeight - 1 downto 0 do
+      let rec loop = function
+        | boardWidth -> true
+        | j ->
+          if self#shapeAt j i == TetrixPiece.(noShape.color)
+          then false
+          else loop (j + 1)
+      in
+      let lineIsFull = loop 0
+      in
+      if not lineIsFull
+      then begin
+        numFullLines := !numFullLines + 1;
+        for k = i to boardHeight - 1 do
+          for j = 0 to boardWidth - 1 do
+            self#setShapeAt j k (self#shapeAt j (k + 1));
+          done;
+        done;
+        for j = 0 to boardWidth - 1 do
+          self#setShapeAt j (boardHeight - 1) TetrixPiece.(noShape.color);
+        done;
+      end;
+    done;
 
-void TetrixBoard::removeFullLines()
-{
-    int numFullLines = 0;
+    if !numFullLines > 0
+    then begin
+      numLinesRemoved <- numLinesRemoved + !numFullLines;
+      score <- score + 10 * !numFullLines;
+      linesRemovedChanged#emit numLinesRemoved;
+      scoreChanged#emit score;
 
-    for (int i = BoardHeight - 1; i >= 0; --i) {
-        bool lineIsFull = true;
+      (* timer.start(500, this); *)
+      isWaitingAfterLine <- true;
+      curPiece <- TetrixPiece.noShape;
+      self#update;
+    end
 
-        for (int j = 0; j < BoardWidth; ++j) {
-            if (shapeAt(j, i) == NoShape) {
-                lineIsFull = false;
-                break;
-            }
-        }
+  method newPiece =
+    curPiece <- nextPiece;
+    nextPiece <- TetrixPiece.randomShape ();
+    self#showNextPiece;
+    let (_, minY) = TetrixPiece.minXY curPiece
+    in
+    curX <- boardWidth / 2 + 1;
+    curY <- boardHeight - 1 + minY;
 
-        if (lineIsFull) {
-            ++numFullLines;
-            for (int k = i; k < BoardHeight - 1; ++k) {
-                for (int j = 0; j < BoardWidth; ++j)
-                    shapeAt(j, k) = shapeAt(j, k + 1);
-            }
-            for (int j = 0; j < BoardWidth; ++j)
-                shapeAt(j, BoardHeight - 1) = NoShape;
-        }
-    }
+    if not (self#tryMove curPiece curX curY)
+    then begin
+      curPiece <- TetrixPiece.noShape;
+      (* timer.stop(); *)
+      isStarted <- false;
+    end
 
-    if (numFullLines > 0) {
-        numLinesRemoved += numFullLines;
-        score += 10 * numFullLines;
-        emit linesRemovedChanged(numLinesRemoved);
-        emit scoreChanged(score);
-
-        timer.start(500, this);
-        isWaitingAfterLine = true;
-        curPiece.setShape(NoShape);
-        update();
-    }
-}
-
-void TetrixBoard::newPiece()
-{
-    curPiece = nextPiece;
-    nextPiece.setRandomShape();
-    showNextPiece();
-    curX = BoardWidth / 2 + 1;
-    curY = BoardHeight - 1 + curPiece.minY();
-
-    if (!tryMove(curPiece, curX, curY)) {
-        curPiece.setShape(NoShape);
-        timer.stop();
-        isStarted = false;
-    }
-}
-
-void TetrixBoard::showNextPiece()
-{
-    if (!nextPieceLabel)
-        return;
-
-    int dx = nextPiece.maxX() - nextPiece.minX() + 1;
-    int dy = nextPiece.maxY() - nextPiece.minY() + 1;
-
+  method showNextPiece =
+    let (maxX, maxY) = TetrixPiece.maxXY nextPiece in
+    let (minX, minY) = TetrixPiece.minXY nextPiece in
+    let (dx, dy) = (maxX - minX + 1, maxY - minY + 1)
+    in
+    ()
+(*
     QPixmap pixmap(dx * squareWidth(), dy * squareHeight());
     QPainter painter(&pixmap);
     painter.fillRect(pixmap.rect(), nextPieceLabel->palette().background());
@@ -335,38 +332,37 @@ void TetrixBoard::showNextPiece()
         drawSquare(painter, x * squareWidth(), y * squareHeight(),
                    nextPiece.shape());
     }
-    nextPieceLabel->setPixmap(pixmap);
-}
+    nextPieceLabel->setPixmap(pixmap)
+*)
+  method tryMove newPiece newX newY =
+    let rec loop = function
+      | 4 ->
+        curPiece <- newPiece;
+        curX <- newX;
+        curY <- newY;
+        self#update;
+        true
+      | i -> 
+        let (x, y) = TetrixPiece.xy newPiece i in
+        let (x, y) = (newX + x, newY - y)
+        in
+        if (x < 0) || (x >= boardWidth) || (y < 0) || (y >= boardHeight)
+        then false
+        else
+          if self#shapeAt x y != TetrixPiece.(noShape.color)
+          then false
+          else loop (i + 1)
+    in
+    loop 0
 
-bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY)
-{
-    for (int i = 0; i < 4; ++i) {
-        int x = newX + newPiece.x(i);
-        int y = newY - newPiece.y(i);
-        if (x < 0 || x >= BoardWidth || y < 0 || y >= BoardHeight)
-            return false;
-        if (shapeAt(x, y) != NoShape)
-            return false;
-    }
-
-    curPiece = newPiece;
-    curX = newX;
-    curY = newY;
-    update();
-    return true;
-}
-
-void TetrixBoard::drawSquare(QPainter &painter, int x, int y, TetrixShape shape)
-{
-    static const QRgb colorTable[8] = {
-        0x000000, 0xCC6666, 0x66CC66, 0x6666CC,
-        0xCCCC66, 0xCC66CC, 0x66CCCC, 0xDAAA00
-    };
-
-    QColor color = colorTable[int(shape)];
-    painter.fillRect(x + 1, y + 1, squareWidth() - 2, squareHeight() - 2,
-                     color);
-
+  method drawSquare painter x y color =
+    painter#fillRect
+      (x + 1)
+      (y + 1)
+      (self#squareWidth - 2)
+      (self#squareHeight - 2)
+      color;
+    (*
     painter.setPen(color.light());
     painter.drawLine(x, y + squareHeight() - 1, x, y);
     painter.drawLine(x, y, x + squareWidth() - 1, y);
@@ -376,7 +372,6 @@ void TetrixBoard::drawSquare(QPainter &painter, int x, int y, TetrixShape shape)
                      x + squareWidth() - 1, y + squareHeight() - 1);
     painter.drawLine(x + squareWidth() - 1, y + squareHeight() - 1,
                      x + squareWidth() - 1, y + 1);
-}
-
-*)
+    *)
+    ()
 end

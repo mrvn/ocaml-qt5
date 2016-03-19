@@ -40,3 +40,15 @@ extern "C" value caml_mrvn_QT5_OPainter_drawText(OClass *obj, OClass *rect, valu
     painter->drawText(*r, (Qt::AlignmentFlag)Int_val(ml_align), String_val(ml_text));
     CAMLreturn(Val_unit);
 }
+
+extern "C" value caml_mrvn_QT5_OPainter_fillRect(OClass *obj, OClass *rect, value ml_color) {
+    CAMLparam1(ml_color);
+    fprintf(stderr, "%s(%p, %p, 0x%06x)\n", __PRETTY_FUNCTION__, obj, rect, Int_val(ml_color));
+    QPainter *painter = dynamic_cast<QPainter *>(obj);
+    assert((painter != nullptr) && "OPainter not mixed with QPainter");
+    QRect *r = dynamic_cast<QRect *>(rect);
+    assert((r != nullptr) && "ORect not mixed with QRect");
+    QColor color(Int_val(ml_color));
+    painter->fillRect(*r, color);
+    CAMLreturn(Val_unit);
+}

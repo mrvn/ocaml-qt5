@@ -54,6 +54,13 @@ class oWidget obj = object(self)
     end) : External with type e = oWidget OClass.t -> ORect.t)
     in
     new ORect.oRect (E.stub self#as_oWidget#obj)
+  method update =
+    let module E = (val (module struct
+      type e = oWidget OClass.t -> unit
+      external stub : oWidget OClass.t -> unit = "caml_mrvn_QT5_OWidget_update"
+    end) : External with type e = oWidget OClass.t -> unit)
+    in
+    E.stub self#as_oWidget#obj
 end
 
 and oLayout obj = object(self)

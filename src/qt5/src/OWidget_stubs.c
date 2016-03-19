@@ -146,3 +146,13 @@ extern "C" value caml_mrvn_QT5_OWidget_contentsRect(OClass *obj) {
     res = caml_mrvn_QT5_ORect_make(r.x(), r.y(), r.width(), r.height());
     CAMLreturn(res);
 }
+
+extern "C" value caml_mrvn_QT5_OWidget_update(OClass *obj) {
+    CAMLparam0();
+    CAMLlocal1(res);
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QWidget *widget = dynamic_cast<QWidget *>(obj);
+    assert((widget != nullptr) && "OWidget not mixed with QWidget");
+    widget->update();
+    CAMLreturn(Val_unit);
+}

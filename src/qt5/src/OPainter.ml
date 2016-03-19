@@ -12,6 +12,15 @@ class oPainter obj = object(self:'a)
     let align = Qt.int_of_align absolute horizontal vertical
     in
     E.stub self#as_oPainter#obj rect#as_oRect#obj align text
+  method fillRect x y w h color =
+    let module E = (val (module struct
+      type e = oPainter OClass.t -> ORect.t -> int -> unit
+      external stub : oPainter OClass.t -> ORect.t -> int -> unit = "caml_mrvn_QT5_OPainter_fillRect"
+    end) : External with type e = oPainter OClass.t -> ORect.t -> int -> unit)
+    in
+    let rect = new ORect.qRect x y w h
+    in
+    E.stub self#as_oPainter#obj rect#as_oRect#obj color
 end
 
 type t = oPainter OClass.t
