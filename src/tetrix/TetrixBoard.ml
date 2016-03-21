@@ -53,6 +53,14 @@ class tetrixBoard nextPieceLabel =
   in
 object(self)
   inherit OFrame.qFrame ()
+  inherit OWidget.sizeHint
+  inherit OWidget.minimumSizeHint
+  inherit OWidget.keyPressEvent
+  inherit OWidget.paintEvent
+(*
+    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
+*)
+    
   val scoreChanged = new signal
   val levelChanged = new signal
   val linesRemovedChanged = new signal
@@ -74,19 +82,9 @@ object(self)
   initializer
     self#setFrameStyle ~shadow:OFrame.Sunken ~shape:OFrame.Panel ();
     self#setFocusPolicy Qt.StrongFocus;
-(*
-    QSize sizeHint() const Q_DECL_OVERRIDE;
-    QSize minimumSizeHint() const Q_DECL_OVERRIDE;
-*)
   method scoreChanged = (scoreChanged : int signal)
   method levelChanged = (levelChanged : int signal)
   method linesRemovedChanged = (linesRemovedChanged : int signal)
-(*
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
-private:
-*)
   method private shapeAt x y = board.((y * boardWidth) + x)
   method private setShapeAt x y c = board.((y * boardWidth) + x) <- c
   method private timeoutTime = 1000 / (1 + level)
@@ -97,10 +95,15 @@ private:
       board.(i) <- TetrixPiece.(noShape.color);
     done
 
-  method sizeHint = (boardWidth * 15 + self#frameWidth * 2,
-                     boardHeight * 15 + self#frameWidth * 2)
-  method minimumSizeHint = (boardWidth * 5 + self#frameWidth * 2,
-                            boardHeight * 5 + self#frameWidth * 2)
+  method sizeHint =
+    new OSize.qSize
+      (boardWidth * 15 + self#frameWidth * 2)
+      (boardHeight * 15 + self#frameWidth * 2)
+
+  method minimumSizeHint =
+    new OSize.qSize
+      (boardWidth * 5 + self#frameWidth * 2)
+      (boardHeight * 5 + self#frameWidth * 2)
 
   method start =
     if isPaused
@@ -134,7 +137,6 @@ private:
       self#update;
     end
 
-  inherit OWidget.paintEvent
   method paintEvent event =
     Printf.printf "tetrixBoard.paintEvent\n";
     self#qPaintEvent event;
@@ -173,9 +175,9 @@ private:
               curPiece.color
           done)
 
+	method keyPressEvent event =
+	  self#qKeyPressEvent event
 (*
-void TetrixBoard::keyPressEvent(QKeyEvent *event)
-{
     if (!isStarted || isPaused || curPiece.shape() == NoShape) {
         QFrame::keyPressEvent(event);
         return;
@@ -264,7 +266,7 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
     in
     for i = boardHeight - 1 downto 0 do
       let rec loop = function
-        | boardWidth -> true
+        | j when j == boardWidth -> true
         | j ->
           if self#shapeAt j i == TetrixPiece.(noShape.color)
           then false

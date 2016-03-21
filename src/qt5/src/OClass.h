@@ -18,7 +18,9 @@ public:
     void decr(size_t amount=1);
 protected:
     value maybe_obj();
+    value maybe_obj() const;
     value get_obj();
+    value get_obj() const;
 private:
     value ml_obj_;
     size_t ref_count_;

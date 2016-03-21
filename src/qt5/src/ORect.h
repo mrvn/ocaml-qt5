@@ -24,7 +24,7 @@ public:
     virtual ~OQRect();
 };
 
-extern "C" value caml_mrvn_QT5_ORect_make(value ml_x, value ml_y, value ml_w, value ml_h);
+extern "C" value caml_mrvn_QT5_ORect_alloc(int x, int y, int w, int h);
 
 #undef MRVN_QT5_ORECT_H__INSIDE
 #endif // #ifndef MRVN_QT5_ORECT_H

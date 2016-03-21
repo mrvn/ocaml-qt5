@@ -95,7 +95,38 @@ value OClass::maybe_obj() {
     CAMLreturn(res);
 }
 
+value OClass::maybe_obj() const {
+    CAMLparam0();
+    CAMLlocal2(opt, res);
+    // fprintf(stderr, "%p [weak=0x%lx]->%s\n", this, ml_obj_, __PRETTY_FUNCTION__);
+    res = 0;
+    if (ml_obj_ != 0) {
+	opt = caml_weak_get(ml_obj_, 0);
+	// fprintf(stderr, "%p [weak=0x%lx]->%s: opt = 0x%lx\n", this, ml_obj_, __PRETTY_FUNCTION__, opt);
+	if (Is_block(opt)) { // Some x
+	    res = Field(opt, 0);
+	    // fprintf(stderr, "%p [weak=0x%lx]->%s: res = 0x%lx\n", this, ml_obj_, __PRETTY_FUNCTION__, res);
+	    if (res != 0) {
+		// fprintf(stderr, "%p [weak=0x%lx]->%s: tag = %u\n", this, ml_obj_, __PRETTY_FUNCTION__, Tag_val(res));
+		assert((Tag_val(res) == Object_tag) && "this is not attached to an ocaml object");
+	    }
+	}
+    }
+    // fprintf(stderr, "%p [0x%lx]->%s\n", this, res, __PRETTY_FUNCTION__);
+    CAMLreturn(res);
+}
+
 value OClass::get_obj() {
+    CAMLparam0();
+    CAMLlocal1(res);
+    // fprintf(stderr, "%p [weak=0x%lx]->%s()\n", this, ml_obj_, __PRETTY_FUNCTION__);
+    res = maybe_obj();
+    // fprintf(stderr, "%p [0x%lx]->%s()\n", this, res, __PRETTY_FUNCTION__);
+    assert((res != 0) && "failed to find object for this");
+    CAMLreturn(res);
+}
+
+value OClass::get_obj() const {
     CAMLparam0();
     CAMLlocal1(res);
     // fprintf(stderr, "%p [weak=0x%lx]->%s()\n", this, ml_obj_, __PRETTY_FUNCTION__);

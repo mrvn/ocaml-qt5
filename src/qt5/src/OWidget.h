@@ -6,11 +6,15 @@
 #define MRVN_QT5_OWIDGET_H
 #define MRVN_QT5_OWIDGET_H__INSIDE
 
+#include <QSize>
+
 #include "OObject.h"
 #include "OPaintDevice.h"
 
 class OLayout;
 class QPaintEvent;
+class QEvent;
+class QKeyEvent;
 
 class OWidget : public virtual OObject, public virtual OPaintDevice {
 public:
@@ -19,12 +23,12 @@ public:
     void setLayout(OLayout *layout);
     void paintEvent(QPaintEvent *event);
     virtual void qPaintEvent(QPaintEvent *event) = 0;
-    /*
-    virtual void keyPressEvent(QKeyEvent * event) {
-	fprintf(stderr, "%p <0x%lx>->%s(%p)\n", this, OWidget<Q>::proxy(), __PRETTY_FUNCTION__, event);
-	Q::keyPressEvent(event);
-    }
-    */
+    virtual QSize sizeHint() const;
+    virtual QSize qSizeHint() const = 0;
+    virtual QSize minimumSizeHint() const;
+    virtual QSize qMinimumSizeHint() const = 0;
+    virtual void keyPressEvent(QKeyEvent * event);
+    virtual void qKeyPressEvent(QKeyEvent * event) = 0;
 };
 
 template<class O, class Q>
@@ -44,6 +48,24 @@ public:
     virtual void qPaintEvent(QPaintEvent *event) {
 	// fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
         Q::paintEvent(event);
+    }
+    virtual QSize sizeHint() const final override {
+	return O::sizeHint();
+    }
+    virtual QSize qSizeHint() const {
+	return Q::sizeHint();
+    }
+    virtual QSize minimumSizeHint() const final override {
+	return O::minimumSizeHint();
+    }
+    virtual QSize qMinimumSizeHint() const {
+	return Q::minimumSizeHint();
+    }
+    virtual void keyPressEvent(QKeyEvent * event) final override {
+	O::keyPressEvent(event);
+    }
+    virtual void qKeyPressEvent(QKeyEvent * event) {
+	Q::keyPressEvent(event);
     }
 };
 
