@@ -364,16 +364,16 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
       (self#squareWidth - 2)
       (self#squareHeight - 2)
       color;
-    (*
-    painter.setPen(color.light());
-    painter.drawLine(x, y + squareHeight() - 1, x, y);
-    painter.drawLine(x, y, x + squareWidth() - 1, y);
 
-    painter.setPen(color.dark());
-    painter.drawLine(x + 1, y + squareHeight() - 1,
-                     x + squareWidth() - 1, y + squareHeight() - 1);
-    painter.drawLine(x + squareWidth() - 1, y + squareHeight() - 1,
-                     x + squareWidth() - 1, y + 1);
-    *)
-    ()
+    painter#setPenColor color#lighter;
+    painter#drawLine x (y + self#squareHeight - 1) x y;
+    painter#drawLine x y (x + self#squareWidth - 1) y;
+
+    painter#setPenColor color#darker;
+    painter#drawLine
+      (x + 1) (y + self#squareHeight - 1)
+      (x + self#squareWidth - 1) (y + self#squareHeight - 1);
+    painter#drawLine
+      (x + self#squareWidth - 1) (y + self#squareHeight - 1)
+      (x + self#squareWidth - 1) (y + 1)
 end

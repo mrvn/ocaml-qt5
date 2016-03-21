@@ -50,47 +50,47 @@ type tetrixShape =
 | MirroredLShape
 
 type tetrixPiece = {
-  color : int;
+  color : QT5.OColor.qColor;
   coords : (int * int) array;
 }
 
 let noShape = {
-  color = 0x000000;
+  color = new QT5.OColor.qColor("#000000");
   coords = [| (0, 0); (0, 0); (0, 0); (0, 0); |];
 }
 
 let zShape = {
-  color = 0xCC6666;
+  color = new QT5.OColor.qColor("#CC6666");
   coords = [| ( 0, -1); ( 0,  0); (-1,  0); (-1,  1); |];
 }
 
 let sShape = {
-  color = 0x66CC66;
+  color = new QT5.OColor.qColor("#66CC66");
   coords = [| ( 0, -1); ( 0,  0); ( 1,  0); ( 1,  1); |];
 }
 
 let lineShape = {
-  color = 0x6666CC;
+  color = new QT5.OColor.qColor("#6666CC");
   coords = [| ( 0, -1); ( 0,  0); ( 0,  1); ( 0,  2); |];
 }
 
 let tShape = {
-  color = 0xCCCC66;
+  color = new QT5.OColor.qColor("#CCCC66");
   coords = [| (-1,  0); ( 0,  0); ( 1,  0); ( 0,  1); |];
 }
 
 let squareShape = {
-  color = 0xCC66CC;
+  color = new QT5.OColor.qColor("#CC66CC");
   coords = [| ( 0,  0); ( 1,  0); ( 0,  1); ( 1,  1); |];
 }
 
 let lShape = {
-  color = 0x66CCCC;
+  color = new QT5.OColor.qColor("#66CCCC");
   coords = [| (-1, -1); ( 0, -1); ( 0,  0); ( 0,  1); |];
 }
 
 let mirroredLShape = {
-  color = 0xDAAA00;
+  color = new QT5.OColor.qColor("#DAAA00");
   coords = [| ( 1, -1); ( 0, -1); ( 0,  0); ( 0,  1); |];
 }
 
