@@ -8,6 +8,8 @@
 
 #include "OFrame.h"
 
+class OPixmap;
+
 class OLabel : public OFrame {
 public:
     OLabel();

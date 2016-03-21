@@ -47,7 +47,7 @@ class ['a] signal = object
   method emit x = List.iter (fun callback -> callback x) callbacks
 end
   
-class tetrixBoard nextPieceLabel =
+class tetrixBoard (nextPieceLabel : #OLabel.oLabel) =
   let boardWidth = 10 in
   let boardHeight = 22
   in
@@ -320,22 +320,28 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
   method showNextPiece =
     let (maxX, maxY) = TetrixPiece.maxXY nextPiece in
     let (minX, minY) = TetrixPiece.minXY nextPiece in
-    let (dx, dy) = (maxX - minX + 1, maxY - minY + 1)
+    let (dx, dy) = (maxX - minX + 1, maxY - minY + 1) in
+    let pixmap =
+      new QT5.OPixmap.qPixmap (dx * self#squareWidth) (dy * self#squareHeight)
     in
-    ()
-(*
-    QPixmap pixmap(dx * squareWidth(), dy * squareHeight());
-    QPainter painter(&pixmap);
-    painter.fillRect(pixmap.rect(), nextPieceLabel->palette().background());
+    let painter = new QT5.OPainter.qPainter pixmap
+    in
+    painter#fillRect pixmap#rect nextPieceLabel#palette#background;
 
-    for (int i = 0; i < 4; ++i) {
-        int x = nextPiece.x(i) - nextPiece.minX();
-        int y = nextPiece.y(i) - nextPiece.minY();
-        drawSquare(painter, x * squareWidth(), y * squareHeight(),
-                   nextPiece.shape());
-    }
-    nextPieceLabel->setPixmap(pixmap)
-*)
+    let (mx, my) = TetrixPiece.minXY nextPiece in
+    for i = 0 to 3 do
+      let (x, y) = TetrixPiece.xy nextPiece i in
+      let (x, y) = (x - mx, y - my)
+      in
+      Printf.printf "### drawSquare %d %d\n%!" x y;
+      self#drawSquare
+        painter
+        (x * self#squareWidth)
+        (y * self#squareHeight)
+        nextPiece.TetrixPiece.color;
+    done;
+    nextPieceLabel#setPixmap pixmap
+
   method tryMove newPiece newX newY =
     let rec loop = function
       | 4 ->
@@ -358,7 +364,7 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
     loop 0
 
   method drawSquare painter x y color =
-    painter#fillRect
+    painter#fillRectXYWH
       (x + 1)
       (y + 1)
       (self#squareWidth - 2)

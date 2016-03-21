@@ -61,6 +61,13 @@ class oWidget obj = object(self)
     end) : External with type e = oWidget OClass.t -> unit)
     in
     E.stub self#as_oWidget#obj
+  method palette =
+    let module E = (val (module struct
+      type e = oWidget OClass.t -> OPalette.t
+      external stub : oWidget OClass.t -> OPalette.t = "caml_mrvn_QT5_OWidget_palette"
+    end) : External with type e = oWidget OClass.t -> OPalette.t)
+    in
+    new OPalette.oPalette (E.stub self#as_oWidget#obj)
 end
 
 and oLayout obj = object(self)

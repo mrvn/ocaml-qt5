@@ -136,6 +136,10 @@ value OClass::get_obj() const {
     CAMLreturn(res);
 }
 
+void OClass::preDestructor() {
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, get_obj(), __PRETTY_FUNCTION__);
+}
+
 //external make : unit -> 'a t = "caml_mrvn_Qt5_OClass_make"
 extern "C" value caml_mrvn_Qt5_OClass_make(void) {
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);

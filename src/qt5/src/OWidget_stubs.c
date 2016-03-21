@@ -17,6 +17,7 @@
 #include "OKeyEvent.h"
 #include "ORect.h"
 #include "OSize.h"
+#include "OPalette.h"
 
 OWidget::OWidget() {
     fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
@@ -290,4 +291,15 @@ extern "C" value caml_mrvn_QT5_OWidget_update(OClass *obj) {
     assert((widget != nullptr) && "OWidget not mixed with QWidget");
     widget->update();
     CAMLreturn(Val_unit);
+}
+
+extern "C" value caml_mrvn_QT5_OWidget_palette(OClass *obj) {
+    CAMLparam0();
+    CAMLlocal1(res);
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    QWidget *widget = dynamic_cast<QWidget *>(obj);
+    assert((widget != nullptr) && "OWidget not mixed with QWidget");
+    const QPalette &p = widget->palette();
+    res = caml_mrvn_QT5_OPalette_alloc(p);
+    CAMLreturn(res);
 }

@@ -6,6 +6,9 @@
 #define MRVN_QT5_OCLASS_H
 #define MRVN_QT5_OCLASS_H__INSIDE
 
+#include <utility>
+#include <stdio.h>
+
 #include <caml/mlvalues.h>
 
 class OClass {
@@ -16,6 +19,7 @@ public:
     void unregister_obj();
     void incr(size_t amount=1);
     void decr(size_t amount=1);
+    virtual void preDestructor();
 protected:
     value maybe_obj();
     value maybe_obj() const;
@@ -24,6 +28,19 @@ protected:
 private:
     value ml_obj_;
     size_t ref_count_;
+};
+
+template<class O, class Q>
+class TClass : public virtual O, public Q {
+public:
+    template<typename ... A>
+    TClass(A && ... a) : O(), Q(std::forward<A>(a) ...) {
+	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+    }
+    virtual ~TClass() {
+	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	O::preDestructor();
+    }
 };
 
 #undef MRVN_QT5_OCLASS_H__INSIDE

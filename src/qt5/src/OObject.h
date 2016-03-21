@@ -6,8 +6,6 @@
 #define MRVN_QT5_OOBJECT_H
 #define MRVN_QT5_OOBJECT_H__INSIDE
 
-#include <utility>
-
 #include "OClass.h"
 
 class QObject;
@@ -21,15 +19,14 @@ public:
 };
 
 template<class O, class Q>
-class TObject : public virtual O, public Q {
+class TObject : public TClass<O, Q> {
 public:
     template<typename ... A>
-    TObject(A && ... a) : O(), Q(std::forward<A>(a) ...) {
+    TObject(A && ... a) : TClass<O, Q>(std::forward<A>(a) ...) {
 	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TObject() {
 	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
-	O::preDestructor();
     }
     virtual bool event(QEvent *event) final override {
 	if (O::event(event)) {

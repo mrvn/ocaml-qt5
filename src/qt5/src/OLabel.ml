@@ -12,6 +12,16 @@ class oLabel obj = object(self)
     let align = Qt.int_of_align absolute horizontal vertical
     in
     E.stub self#as_oLabel#obj align
+  method setPixmap : 'a . (<as_oPixmap : OPixmap.oPixmap; ..> as 'a) -> unit = fun pixmap ->
+(*
+  method setPixmap : OPixmap.oPixmap -> unit = fun pixmap ->
+*)
+    let module E = (val (module struct
+      type e = oLabel OClass.t -> OPixmap.t -> unit
+      external stub : oLabel OClass.t -> OPixmap.t -> unit = "caml_mrvn_QT5_OLabel_setPixmap"
+    end) : External with type e = oLabel OClass.t -> OPixmap.t -> unit)
+    in
+    E.stub self#as_oLabel#obj pixmap#as_oPixmap#obj
 end
 
 type t = oLabel OClass.t
