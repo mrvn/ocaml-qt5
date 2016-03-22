@@ -9,6 +9,8 @@
 #include "OClass.h"
 
 class QObject;
+class QEvent;
+class QTimerEvent;
 
 class OObject : public virtual OClass {
 public:
@@ -16,6 +18,8 @@ public:
     virtual ~OObject();
     virtual void preDestructor();
     virtual bool event(QEvent *event);
+    virtual void timerEvent(QTimerEvent *event);
+    virtual void qTimerEvent(QTimerEvent *event) = 0;
 };
 
 template<class O, class Q>
@@ -35,6 +39,12 @@ public:
 	    return Q::event(event);
 	}
     };
+    virtual void timerEvent(QTimerEvent *event) final override {
+        O::timerEvent(event);
+    }
+    virtual void qTimerEvent(QTimerEvent *event) final override {
+        Q::timerEvent(event);
+    }
 };
 
 using OQObject = TObject<OObject, QObject>;

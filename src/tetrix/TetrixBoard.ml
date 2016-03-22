@@ -57,18 +57,14 @@ object(self)
   inherit OWidget.minimumSizeHint
   inherit OWidget.keyPressEvent
   inherit OWidget.paintEvent
-(*
-    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
-*)
+  inherit OObject.timerEvent
     
   val scoreChanged = new signal
   val levelChanged = new signal
   val linesRemovedChanged = new signal
   val mutable isStarted = false
   val mutable isPaused = false
-    (*
-    QBasicTimer timer;
-    *)
+  val timer = new OBasicTimer.qBasicTimer ()
   val mutable isWaitingAfterLine = false
   val mutable curPiece = TetrixPiece.noShape
   val mutable nextPiece = TetrixPiece.randomShape ()
@@ -79,17 +75,27 @@ object(self)
   val mutable score = 0
   val mutable level = 0
   val board = Array.init (boardWidth * boardHeight) (fun _ -> TetrixPiece.(noShape.color))
+
   initializer
     self#setFrameStyle ~shadow:OFrame.Sunken ~shape:OFrame.Panel ();
     self#setFocusPolicy Qt.StrongFocus;
+
   method scoreChanged = (scoreChanged : int signal)
+
   method levelChanged = (levelChanged : int signal)
+
   method linesRemovedChanged = (linesRemovedChanged : int signal)
+
   method private shapeAt x y = board.((y * boardWidth) + x)
+
   method private setShapeAt x y c = board.((y * boardWidth) + x) <- c
+
   method private timeoutTime = 1000 / (1 + level)
+
   method private squareWidth = self#contentsRect#width / boardWidth
+
   method private squareHeight = self#contentsRect#height / boardHeight
+
   method private clearBoard =
     for i = 0 to boardHeight * boardWidth - 1 do
       board.(i) <- TetrixPiece.(noShape.color);
@@ -122,9 +128,7 @@ object(self)
       levelChanged#emit level;
 
       self#newPiece;
-      (*
-      timer.start(timeoutTime(), this);
-      *)
+      timer#start self#timeoutTime self;
     end
 
   method pause =
@@ -132,8 +136,8 @@ object(self)
     then begin
       isPaused <- not isPaused;
       if isPaused
-      then () (* timer#stop *)
-      else (); (* timer#start(timeoutTime(), this); *)
+      then timer#stop
+      else timer#start self#timeoutTime self;
       self#update;
     end
 
@@ -166,7 +170,7 @@ object(self)
         then
           for i = 0 to 3 do
             let (x, y) = xy curPiece i in
-            let (x, y) = (curX + x, curY + y)
+            let (x, y) = (curX + x, curY - y)
             in 
             self#drawSquare
               painter
@@ -175,8 +179,8 @@ object(self)
               curPiece.color
           done)
 
-	method keyPressEvent event =
-	  self#qKeyPressEvent event
+  method keyPressEvent event =
+    self#qKeyPressEvent event
 (*
     if (!isStarted || isPaused || curPiece.shape() == NoShape) {
         QFrame::keyPressEvent(event);
@@ -206,22 +210,34 @@ object(self)
         QFrame::keyPressEvent(event);
     }
 }
-
-void TetrixBoard::timerEvent(QTimerEvent *event)
-{
-    if (event->timerId() == timer.timerId()) {
-        if (isWaitingAfterLine) {
-            isWaitingAfterLine = false;
-            newPiece();
-            timer.start(timeoutTime(), this);
-        } else {
-            oneLineDown();
-        }
-    } else {
-        QFrame::timerEvent(event);
-    }
-}
 *)
+  method timerEvent event =
+    Printf.printf "TetrixBoard#timerEvent\n%!";
+    if event#timerId == timer#timerId
+    then
+      begin
+        Printf.printf "TetrixBoard#timerEvent: ==\n%!";
+        if isWaitingAfterLine
+        then
+          begin
+            Printf.printf "TetrixBoard#timerEvent: isWaitingAfterLine\n%!";
+            isWaitingAfterLine <- false;
+            self#newPiece;
+            timer#start self#timeoutTime self;
+          end
+        else
+          begin
+            Printf.printf "TetrixBoard#timerEvent: oneLineDown\n%!";
+          self#oneLineDown
+          end
+      end
+    else
+      begin
+        Printf.printf "TetrixBoard#timerEvent: not my event\n%!";
+        self#qTimerEvent event;
+      end;
+    Printf.printf "TetrixBoard#timerEvent done\n%!";
+
   method dropDown =
     let rec loop dropHeight = function
       | 0 -> dropHeight
@@ -235,13 +251,15 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
     self#pieceDropped dropHeight
 
   method oneLineDown =
+    Printf.printf "TetrixBoard#oneLineDown\n%!";
     if not (self#tryMove curPiece curX (curY - 1))
     then self#pieceDropped 0
 
   method pieceDropped dropHeight =
+    Printf.printf "TetrixBoard#pieceDropped %d\n%!" dropHeight;
     for i = 0 to 3 do
       let (x, y) = TetrixPiece.xy curPiece i in
-      let (x, y) = (x + curX, y + curY)
+      let (x, y) = (curX + x, curY - y)
       in
       self#setShapeAt x y curPiece.TetrixPiece.color
     done;
@@ -250,7 +268,7 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
     if numPiecesDropped mod 25 == 0
     then begin
       level <- level + 1;
-      (* timer.start(timeoutTime(), this); *)
+      timer#start self#timeoutTime self;
       levelChanged#emit level;
     end;
 
@@ -259,7 +277,8 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
     self#removeFullLines;
 
     if not isWaitingAfterLine
-    then self#newPiece
+    then self#newPiece;
+    Printf.printf "TetrixBoard#pieceDropped done\n%!"
 
   method removeFullLines =
     let numFullLines = ref 0
@@ -274,10 +293,10 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
       in
       let lineIsFull = loop 0
       in
-      if not lineIsFull
+      if lineIsFull
       then begin
         numFullLines := !numFullLines + 1;
-        for k = i to boardHeight - 1 do
+        for k = i to boardHeight - 2 do
           for j = 0 to boardWidth - 1 do
             self#setShapeAt j k (self#shapeAt j (k + 1));
           done;
@@ -295,7 +314,7 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
       linesRemovedChanged#emit numLinesRemoved;
       scoreChanged#emit score;
 
-      (* timer.start(500, this); *)
+      timer#start 500 self;
       isWaitingAfterLine <- true;
       curPiece <- TetrixPiece.noShape;
       self#update;
@@ -309,12 +328,15 @@ void TetrixBoard::timerEvent(QTimerEvent *event)
     in
     curX <- boardWidth / 2 + 1;
     curY <- boardHeight - 1 + minY;
-
+    Printf.printf "### newPiece: curY %d = %d - 1 + %d\n%!"
+      curY boardHeight minY;
+      
     if not (self#tryMove curPiece curX curY)
     then begin
       curPiece <- TetrixPiece.noShape;
-      (* timer.stop(); *)
+      timer#stop;
       isStarted <- false;
+      Printf.printf "### Game Over ###\n%!";
     end
 
   method showNextPiece =
