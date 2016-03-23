@@ -107,7 +107,7 @@ let shapes =
   |]
 
 let randomShape () =
-  shapes.(Random.int 7)
+  shapes.(Random.int 7 + 1)
 
 let xy t index = t.coords.(index)
 
