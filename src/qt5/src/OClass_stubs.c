@@ -14,7 +14,7 @@ OClass::~OClass() {
     CAMLparam0();
     CAMLlocal3(obj, fn, res);
     fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
-    assert((ml_obj_ == 0) && "Qt5 object destroyed while alive in ocaml");
+    //assert((ml_obj_ == 0) && "Qt5 object destroyed while alive in ocaml");
     if (ref_count_ != 0) {
 	if (ml_obj_ != 0) {
 	    // ocaml object still attached, this should not happen
