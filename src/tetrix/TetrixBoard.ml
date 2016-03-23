@@ -144,6 +144,8 @@ object(self)
   method paintEvent event =
     Printf.printf "tetrixBoard.paintEvent\n";
     self#qPaintEvent event;
+    (* Gc.full_major (); *)
+    Printf.printf "### painter\n%!";
     let painter = new OPainter.qPainter self in
     let rect = self#contentsRect
     in
@@ -346,6 +348,8 @@ object(self)
     let pixmap =
       new QT5.OPixmap.qPixmap (dx * self#squareWidth) (dy * self#squareHeight)
     in
+    Gc.full_major ();
+    Printf.printf "### painter\n%!";
     let painter = new QT5.OPainter.qPainter pixmap
     in
     painter#fillRect pixmap#rect nextPieceLabel#palette#background;
@@ -386,6 +390,7 @@ object(self)
     loop 0
 
   method drawSquare painter x y color =
+    Printf.printf "### drawSquare %d %d\n%!" x y;
     painter#fillRectXYWH
       (x + 1)
       (y + 1)

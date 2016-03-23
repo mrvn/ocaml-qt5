@@ -1,4 +1,5 @@
 #include <QPainter>
+#include <QtCore/QDebug>
 
 #include "OPainter.h"
 
@@ -26,6 +27,8 @@ extern "C" value caml_mrvn_QT5_OPainter_make(OClass *device) {
     QPaintDevice *qdev = dynamic_cast<QPaintDevice *>(device);
     assert((qdev != nullptr) && "OPaintDevice not mixed with QPaintDevice");
     OQPainter *obj = new OQPainter(dev);
+    qDebug() << "OQPainter()" << obj;
+    qDebug() << "QPainter()" << dynamic_cast<QPainter*>(obj);
     assert(obj != nullptr);
     CAMLreturn(value(static_cast<OClass *>(obj)));
 }
@@ -45,10 +48,14 @@ extern "C" value caml_mrvn_QT5_OPainter_fillRect(OClass *obj, OClass *rect, OCla
     CAMLparam0();
     fprintf(stderr, "%s(%p, %p, %p)\n", __PRETTY_FUNCTION__, obj, rect, color);
     QPainter *painter = dynamic_cast<QPainter *>(obj);
+    qDebug() <<  painter;
     assert((painter != nullptr) && "OPainter not mixed with QPainter");
     QRect *r = dynamic_cast<QRect *>(rect);
+    qDebug() <<  *r;
     assert((r != nullptr) && "ORect not mixed with QRect");
     QColor *c = dynamic_cast<QColor *>(color);
+    qDebug() <<  *c;
+    assert((c != nullptr) && "OColor not mixed with QColor");
     painter->fillRect(*r, *c);
     CAMLreturn(Val_unit);
 }
