@@ -89,12 +89,13 @@ extern "C" value caml_mrvn_QT5_ORect_right(OClass *obj) {
 
 extern "C" value caml_mrvn_QT5_ORect_alloc(int x, int y, int w, int h) {
     CAMLparam0();
-    fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+    fprintf(stderr, "%s(%d, %d, %d, %d)\n", __PRETTY_FUNCTION__, x, y, w, h);
     OQRect *obj = new OQRect(x, y, w, h);
     assert(obj != nullptr);
     CAMLreturn(value(static_cast<OClass *>(obj)));
 }
 
 extern "C" value caml_mrvn_QT5_ORect_make(value ml_x, value ml_y, value ml_w, value ml_h) {
+    fprintf(stderr, "%s(%d, %d, %d, %d)\n", __PRETTY_FUNCTION__, Int_val(ml_x), Int_val(ml_y), Int_val(ml_w), Int_val(ml_h));
     return caml_mrvn_QT5_ORect_alloc(Int_val(ml_x), Int_val(ml_y), Int_val(ml_w), Int_val(ml_h));
 }
