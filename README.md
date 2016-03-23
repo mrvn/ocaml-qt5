@@ -1,2 +1,2 @@
 # ocaml-qt5
-bindings fro QT5 widgets
+bindings for QT5 widgets
