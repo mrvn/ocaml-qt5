@@ -146,40 +146,44 @@ object(self)
     self#qPaintEvent event;
     (* Gc.full_major (); *)
     Printf.printf "### painter\n%!";
-    let painter = new OPainter.qPainter self in
-    let rect = self#contentsRect
-    in
-    if isPaused
-    then painter#drawText rect Qt.alignCenter "Pause"
-    else
-      let boardTop = rect#bottom - boardHeight * self#squareHeight
+    let painter = new OPainter.qPainter () in
+    assert (painter#begin_ self);
+    begin
+      let rect = self#contentsRect
       in
-      TetrixPiece.(
-        for i = 0 to boardHeight - 1 do
-          for j = 0 to boardWidth - 1 do
-            let color = self#shapeAt j (boardHeight - i - 1)
-            in
-            if color != noShape.color
-            then
+      if isPaused
+      then painter#drawText rect Qt.alignCenter "Pause"
+      else
+        let boardTop = rect#bottom - boardHeight * self#squareHeight
+        in
+        TetrixPiece.(
+          for i = 0 to boardHeight - 1 do
+            for j = 0 to boardWidth - 1 do
+              let color = self#shapeAt j (boardHeight - i - 1)
+              in
+              if color != noShape.color
+              then
+                self#drawSquare
+                  painter
+                  (rect#left + j * self#squareWidth)
+                  (boardTop + i * self#squareHeight)
+                  color;
+            done
+          done;
+          if curPiece.color != noShape.color
+          then
+            for i = 0 to 3 do
+              let (x, y) = xy curPiece i in
+              let (x, y) = (curX + x, curY - y)
+              in
               self#drawSquare
                 painter
-                (rect#left + j * self#squareWidth)
-                (boardTop + i * self#squareHeight)
-                color;
-          done
-        done;
-        if curPiece.color != noShape.color
-        then
-          for i = 0 to 3 do
-            let (x, y) = xy curPiece i in
-            let (x, y) = (curX + x, curY - y)
-            in 
-            self#drawSquare
-              painter
-              (rect#left + x * self#squareWidth)
-              (boardTop + (boardHeight - y - 1) * self#squareHeight)
-              curPiece.color
-          done)
+                (rect#left + x * self#squareWidth)
+                (boardTop + (boardHeight - y - 1) * self#squareHeight)
+                curPiece.color
+            done);
+    end;
+    painter#end_
 
   method keyPressEvent event =
     self#qKeyPressEvent event
@@ -350,22 +354,25 @@ object(self)
     in
     Gc.full_major ();
     Printf.printf "### painter\n%!";
-    let painter = new QT5.OPainter.qPainter pixmap
-    in
-    painter#fillRect pixmap#rect nextPieceLabel#palette#background;
+    let painter = new QT5.OPainter.qPainter () in
+    assert (painter#begin_ pixmap);
+    begin
+      painter#fillRect pixmap#rect nextPieceLabel#palette#background;
 
-    let (mx, my) = TetrixPiece.minXY nextPiece in
-    for i = 0 to 3 do
-      let (x, y) = TetrixPiece.xy nextPiece i in
-      let (x, y) = (x - mx, y - my)
-      in
-      Printf.printf "### drawSquare %d %d\n%!" x y;
-      self#drawSquare
-        painter
-        (x * self#squareWidth)
-        (y * self#squareHeight)
-        nextPiece.TetrixPiece.color;
-    done;
+      let (mx, my) = TetrixPiece.minXY nextPiece in
+      for i = 0 to 3 do
+        let (x, y) = TetrixPiece.xy nextPiece i in
+        let (x, y) = (x - mx, y - my)
+        in
+        Printf.printf "### drawSquare %d %d\n%!" x y;
+        self#drawSquare
+          painter
+          (x * self#squareWidth)
+          (y * self#squareHeight)
+          nextPiece.TetrixPiece.color;
+      done;
+    end;
+    painter#end_;
     nextPieceLabel#setPixmap pixmap
 
   method tryMove newPiece newX newY =

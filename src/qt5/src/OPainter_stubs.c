@@ -1,5 +1,4 @@
 #include <QPainter>
-#include <QtCore/QDebug>
 
 #include "OPainter.h"
 
@@ -8,27 +7,44 @@
 #include <caml/memory.h>
 #include <cassert>
 
-OPainter::OPainter(OPaintDevice *device) : device_(device) {
-    fprintf(stderr, "%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, device_);
-    device_->incr();
+#include "OPaintDevice.h"
+
+OPainter::OPainter() : device_(nullptr) {
+    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 OPainter::~OPainter() {
     fprintf(stderr, "%p [0x%lx]->%s: device = %p\n", this, maybe_obj(), __PRETTY_FUNCTION__, device_);
-    device_->decr();
+    assert((device_ == nullptr) && "forgot to cal end()");
 }
 
-extern "C" value caml_mrvn_QT5_OPainter_make(OClass *device) {
+bool OPainter::begin(OPaintDevice *device) {
+    fprintf(stderr, "%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, device);
+    assert((device_ == nullptr) && "already have a device");
+    device_ = device;
+    device_->registerPainter(this);
+    QPainter *painter = dynamic_cast<QPainter *>(this);
+    assert((painter != nullptr) && "OPainter not mixed with QPainter");
+    QPaintDevice *dev = dynamic_cast<QPaintDevice *>(device);
+    assert((dev != nullptr) && "OPaintDevice not mixed with QPaintDevice");
+    return painter->begin(dev);
+}
+
+
+void OPainter::end() {
+    fprintf(stderr, "%p [0x%lx]->%s: device = %p\n", this, maybe_obj(), __PRETTY_FUNCTION__, device_);
+    assert((device_ != nullptr) && "don't have a device");
+    QPainter *painter = dynamic_cast<QPainter *>(this);
+    assert((painter != nullptr) && "OPainter not mixed with QPainter");
+    painter->end();
+    device_->unregisterPainter(this);
+    device_ = nullptr;
+}
+
+extern "C" value caml_mrvn_QT5_OPainter_make() {
     CAMLparam0();
     fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
-    OPaintDevice *dev = dynamic_cast<OPaintDevice *>(device);
-    assert((dev != nullptr) && "not an OPaintDevice");
-    /* make sure the dynamic_cast in OQPainter() doesn't fail */
-    QPaintDevice *qdev = dynamic_cast<QPaintDevice *>(device);
-    assert((qdev != nullptr) && "OPaintDevice not mixed with QPaintDevice");
-    OQPainter *obj = new OQPainter(dev);
-    qDebug() << "OQPainter()" << obj;
-    qDebug() << "QPainter()" << dynamic_cast<QPainter*>(obj);
+    OQPainter *obj = new OQPainter();
     assert(obj != nullptr);
     CAMLreturn(value(static_cast<OClass *>(obj)));
 }
@@ -48,13 +64,10 @@ extern "C" value caml_mrvn_QT5_OPainter_fillRect(OClass *obj, OClass *rect, OCla
     CAMLparam0();
     fprintf(stderr, "%s(%p, %p, %p)\n", __PRETTY_FUNCTION__, obj, rect, color);
     QPainter *painter = dynamic_cast<QPainter *>(obj);
-    qDebug() <<  painter;
     assert((painter != nullptr) && "OPainter not mixed with QPainter");
     QRect *r = dynamic_cast<QRect *>(rect);
-    qDebug() <<  *r;
     assert((r != nullptr) && "ORect not mixed with QRect");
     QColor *c = dynamic_cast<QColor *>(color);
-    qDebug() <<  *c;
     assert((c != nullptr) && "OColor not mixed with QColor");
     painter->fillRect(*r, *c);
     CAMLreturn(Val_unit);
@@ -76,5 +89,24 @@ extern "C" value caml_mrvn_QT5_OPainter_drawLine(OClass *obj, value ml_x1, value
     QPainter *painter = dynamic_cast<QPainter *>(obj);
     assert((painter != nullptr) && "OPainter not mixed with QPainter");
     painter->drawLine(Int_val(ml_x1), Int_val(ml_y1), Int_val(ml_x2), Int_val(ml_y2));
+    CAMLreturn(Val_unit);
+}
+
+extern "C" value caml_mrvn_QT5_OPainter_begin(OClass *obj, OClass *device) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    OPainter *painter = dynamic_cast<OPainter *>(obj);
+    assert((painter != nullptr) && "not an OPainter");
+    OPaintDevice *dev = dynamic_cast<OPaintDevice *>(device);
+    assert((dev != nullptr) && "not an OPaintDevice");
+    CAMLreturn(Val_bool(painter->begin(dev)));
+}
+
+extern "C" value caml_mrvn_QT5_OPainter_end(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    OPainter *painter = dynamic_cast<OPainter *>(obj);
+    assert((painter != nullptr) && "not an OPainter");
+    painter->end();
     CAMLreturn(Val_unit);
 }

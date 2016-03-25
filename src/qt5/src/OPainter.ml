@@ -37,21 +37,35 @@ class oPainter obj = object(self:'a)
     end) : External with type e = oPainter OClass.t -> int -> int -> int -> int -> unit)
     in
     E.stub self#as_oPainter#obj x1 y1 x2 y2
+  method end_ =
+    let module E = (val (module struct
+      type e = oPainter OClass.t -> unit
+      external stub : oPainter OClass.t -> unit = "caml_mrvn_QT5_OPainter_end"
+    end) : External with type e = oPainter OClass.t -> unit)
+    in
+    E.stub self#as_oPainter#obj
+  method begin_ : 'a . (<as_oPaintDevice : OPaintDevice.oPaintDevice; ..> as 'a) -> bool = fun device ->
+    let module E = (val (module struct
+      type e = oPainter OClass.t -> OPaintDevice.t -> bool
+      external stub : oPainter OClass.t -> OPaintDevice.t -> bool = "caml_mrvn_QT5_OPainter_begin"
+    end) : External with type e = oPainter OClass.t -> OPaintDevice.t -> bool)
+    in
+    E.stub self#as_oPainter#obj device#as_oPaintDevice#obj
 end
 
 type t = oPainter OClass.t
 
 module type Make = sig
-  val stub : OPaintDevice.t -> #oPainter OClass.t
+  val stub : unit -> #oPainter OClass.t
 end
 
-class qPainter device =
+class qPainter () =
   let obj =
     let module E = (val (module struct
-      external stub : OPaintDevice.t -> #oPainter OClass.t = "caml_mrvn_QT5_OPainter_make"
+      external stub : unit -> #oPainter OClass.t = "caml_mrvn_QT5_OPainter_make"
     end) : Make)
     in
-    E.stub device#as_oPaintDevice#obj
+    E.stub ()
   in
 object
   inherit oPainter obj
