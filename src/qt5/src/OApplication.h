@@ -6,6 +6,7 @@
 #define MRVN_QT5_OAPPLICATION_H
 #define MRVN_QT5_OAPPLICATION_H__INSIDE
 
+#include "debug.h"
 #include "OObject.h"
 #include "StringArray.h"
 
@@ -20,10 +21,10 @@ class TApplication : public StringArray, public TObject<O, Q> {
 public:
     template<typename ... A>
     TApplication(value ml_args, A && ... a) : StringArray(ml_args), TObject<O, Q>(argc_, argv_, std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TApplication() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

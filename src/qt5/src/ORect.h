@@ -6,8 +6,6 @@
 #define MRVN_QT5_ORECT_H
 #define MRVN_QT5_ORECT_H__INSIDE
 
-#include <utility>
-
 #include "OClass.h"
 
 class QRect;

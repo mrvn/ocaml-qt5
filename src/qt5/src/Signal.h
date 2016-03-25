@@ -12,8 +12,8 @@
 #include <caml/custom.h>
 #include <caml/callback.h>
 #include <cassert>
-#include <stdio.h>
 
+#include "debug.h"
 #include "Connection.h"
 #include "OObject.h"
 
@@ -30,10 +30,10 @@ template<class O, typename A>
 class Signal : public SignalBase {
 public:
     Signal(void (O::*fn)(A)) : fn_(fn) {
-	fprintf(stderr, "%p->%s(%p)\n", this, __PRETTY_FUNCTION__, (void*)fn_);
+	DEBUG("%p->%s(%p)\n", this, __PRETTY_FUNCTION__, (void*)fn_);
     }
     virtual QMetaObject::Connection connect(QObject *obj, value closure) {
-	fprintf(stderr, "%p->%s(obj = %p, fn = %p)\n", this, __PRETTY_FUNCTION__, obj, (void*)fn_);
+	DEBUG("%p->%s(obj = %p, fn = %p)\n", this, __PRETTY_FUNCTION__, obj, (void*)fn_);
 	O *o = dynamic_cast<O*>(obj);
 	assert(o != nullptr);
 	// FIXME: attach to object for disconnect and destruction
@@ -41,7 +41,9 @@ public:
 	assert(closurep != nullptr);
 	*closurep = closure;
 	caml_register_generational_global_root(closurep);
-	return QObject::connect(o, fn_, [closurep](A arg) { fprintf(stderr, "triggered: closure = 0x%lx, arg = %s\n", *closurep, arg ? "true" : "false"); call2(*closurep, arg);});
+	return QObject::connect(o, fn_, [closurep](A arg) {
+		DEBUG("triggered: closure = 0x%lx, arg = %s\n", *closurep, arg ? "true" : "false");
+		call2(*closurep, arg);});
     }
 private:
     void (O::*fn_)(A);

@@ -7,9 +7,9 @@
 #define MRVN_QT5_OCLASS_H__INSIDE
 
 #include <utility>
-#include <stdio.h>
-
 #include <caml/mlvalues.h>
+
+#include "debug.h"
 
 class OClass {
 public:
@@ -35,10 +35,10 @@ class TClass : public virtual O, public Q {
 public:
     template<typename ... A>
     TClass(A && ... a) : O(), Q(std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TClass() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
 	O::preDestructor();
     }
 };

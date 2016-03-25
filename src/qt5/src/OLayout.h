@@ -6,6 +6,9 @@
 #define MRVN_QT5_OLAYOUT_H
 #define MRVN_QT5_OLAYOUT_H__INSIDE
 
+#include <utility>
+
+#include "debug.h"
 #include "OObject.h"
 #include "OLayoutItem.h"
 
@@ -24,10 +27,10 @@ class TLayout : public TObject<O, Q> {
 public:
     template<typename ... A>
     TLayout(A && ... a) : TObject<O, Q>(std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TLayout() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

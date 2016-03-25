@@ -69,5 +69,4 @@ class qPainter () =
   in
 object
   inherit oPainter obj
-  initializer Gc.full_major ()
 end

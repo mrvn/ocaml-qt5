@@ -6,6 +6,10 @@
 #define MRVN_QT5_OLABEL_H
 #define MRVN_QT5_OLABEL_H__INSIDE
 
+
+#include <utility>
+
+#include "debug.h"
 #include "OFrame.h"
 
 class OPixmap;
@@ -21,14 +25,14 @@ class TLabel : public TFrame<O, Q> {
 public:
     template<typename ... A>
     TLabel(A && ... a) : TFrame<O, Q>(std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     template<typename ... A>
     TLabel(QString text, A && ... a) : TFrame<O, Q>(text, std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TLabel() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

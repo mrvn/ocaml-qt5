@@ -6,6 +6,9 @@
 #define MRVN_QT5_OFRAME_H
 #define MRVN_QT5_OFRAME_H__INSIDE
 
+#include <utility>
+
+#include "debug.h"
 #include "OWidget.h"
 
 class OFrame : public OWidget {
@@ -19,10 +22,10 @@ class TFrame : public TWidget<O, Q> {
 public:
     template<typename ... A>
     TFrame(A && ... a) : TWidget<O, Q>(std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TFrame() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

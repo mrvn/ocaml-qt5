@@ -2,17 +2,16 @@
 
 #include "OMainWindow.h"
 
-#include <stdio.h>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <cassert>
 
 OMainWindow::OMainWindow() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    DEBUG("%p->%s\n", this, __PRETTY_FUNCTION__);
 }
 
 OMainWindow::~OMainWindow() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    DEBUG("%p->%s\n", this, __PRETTY_FUNCTION__);
 }
 
 void OMainWindow::removeCentralWidget() {
@@ -21,15 +20,15 @@ void OMainWindow::removeCentralWidget() {
     if (win->centralWidget() != nullptr) { // protect buggy win->takeCentralWidget()
 	QWidget *w = win->takeCentralWidget();
 	if (w != nullptr) {
-	    fprintf(stderr, "  has central widget\n");
+	    DEBUG("  has central widget\n");
 	    // has a central widget
 	    OWidget *o = dynamic_cast<OWidget *>(w);
 	    if (o != nullptr) {
 		// it's an ocaml widget, lower ref count
-		fprintf(stderr, "  decrementing\n");
+		DEBUG("  decrementing\n");
 		o->decr();
 	    } else {
-		fprintf(stderr, "  pure QT5 widget, delete\n");
+		DEBUG("  pure QT5 widget, delete\n");
 		// pure QT5 widget, delete
 		delete w;
 	    }
@@ -38,14 +37,14 @@ void OMainWindow::removeCentralWidget() {
 }
 
 void OMainWindow::preDestructor() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    DEBUG("%p->%s\n", this, __PRETTY_FUNCTION__);
     // remove central widget from main window
     removeCentralWidget();
     OWidget::preDestructor();
 }
 
 void OMainWindow::setCentralWidget(OWidget *w) {
-    fprintf(stderr, "%p->%s(%p)\n", this, __PRETTY_FUNCTION__, w);
+    DEBUG("%p->%s(%p)\n", this, __PRETTY_FUNCTION__, w);
     // remove old central widget
     removeCentralWidget();
     // add new central widget
@@ -58,7 +57,7 @@ void OMainWindow::setCentralWidget(OWidget *w) {
 }
 
 extern "C" value caml_mrvn_QT5_OMainWindow_make(void) {
-    fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+    DEBUG("%s()\n", __PRETTY_FUNCTION__);
     OQMainWindow *win = new OQMainWindow();
     assert((win != nullptr) && "OMainWindow not mixed with QMainWindow");
     return value(static_cast<OClass *>(win));
@@ -67,7 +66,7 @@ extern "C" value caml_mrvn_QT5_OMainWindow_make(void) {
 /*
 extern "C" value caml_mrvn_QT5_OMainWindow_centralWidget(value ml_win) {
   CAMLparam1(ml_win);
-  fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+  DEBUG("%s()\n", __PRETTY_FUNCTION__);
   Proxy<OMainWindow<QMainWindow> > *proxy = (Proxy<OMainWindow<QMainWindow> > *)Data_custom_val(ml_win);
   OWidget<QWidget> *w = proxy->call<OWidget<QWidget> *>(&OMainWindow<QMainWindow>::centralWidget);
   assert(w != nullptr);
@@ -78,7 +77,7 @@ extern "C" value caml_mrvn_QT5_OMainWindow_centralWidget(value ml_win) {
 
 extern "C" value caml_mrvn_QT5_OMainWindow_setCentralWidget(OClass *obj, OClass *w) {
     CAMLparam0();
-    fprintf(stderr, "%s(obj = %p, widget = %p)\n", __PRETTY_FUNCTION__, obj, w);
+    DEBUG("%s(obj = %p, widget = %p)\n", __PRETTY_FUNCTION__, obj, w);
     OMainWindow *win = dynamic_cast<OMainWindow *>(obj);
     assert((win != nullptr) && "obj is not a OMainWindow");
     OWidget *widget = dynamic_cast<OWidget *>(w);

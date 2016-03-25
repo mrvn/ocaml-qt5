@@ -2,35 +2,36 @@
 
 #include "OColor.h"
 
-#include <stdio.h>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <cassert>
 
+#include "debug.h"
+
 OColor::OColor() {
-    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
+    DEBUG("%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 OColor::~OColor() {
-    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
+    DEBUG("%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 OQColor::OQColor(const char *name) : OColor(), QColor(name) {
-    fprintf(stderr, "%p [0x%lx]->%s('%s')\n", this, OColor::maybe_obj(), __PRETTY_FUNCTION__, name);
+    DEBUG("%p [0x%lx]->%s('%s')\n", this, OColor::maybe_obj(), __PRETTY_FUNCTION__, name);
 }
 
 OQColor::OQColor(const QColor &color) : OColor(), QColor(color
 ) {
-    fprintf(stderr, "%p [0x%lx]->%s(color)\n", this, OColor::maybe_obj(), __PRETTY_FUNCTION__);
+    DEBUG("%p [0x%lx]->%s(color)\n", this, OColor::maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 OQColor::~OQColor() {
-    fprintf(stderr, "%p [0x%lx]->%s\n", this, OColor::maybe_obj(), __PRETTY_FUNCTION__);
+    DEBUG("%p [0x%lx]->%s\n", this, OColor::maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 extern "C" value caml_mrvn_QT5_OColor_darker(OClass *obj) {
     CAMLparam0();
-    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    DEBUG("%s(%p)\n", __PRETTY_FUNCTION__, obj);
     QColor *color = dynamic_cast<QColor *>(obj);
     assert((color != nullptr) && "OColor not mixed with QColor");
     QColor darker = color->darker();
@@ -41,7 +42,7 @@ extern "C" value caml_mrvn_QT5_OColor_darker(OClass *obj) {
 
 extern "C" value caml_mrvn_QT5_OColor_lighter(OClass *obj) {
     CAMLparam0();
-    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    DEBUG("%s(%p)\n", __PRETTY_FUNCTION__, obj);
     QColor *color = dynamic_cast<QColor *>(obj);
     assert((color != nullptr) && "OColor not mixed with QColor");
     QColor lighter = color->lighter();

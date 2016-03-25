@@ -8,6 +8,7 @@
 
 #include <QSize>
 
+#include "debug.h"
 #include "OObject.h"
 #include "OPaintDevice.h"
 
@@ -36,17 +37,17 @@ class TWidget : public TObject<O, Q> {
 public:
     template<typename ... A>
     TWidget(A && ... a) : TObject<O, Q>(std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TWidget() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual void paintEvent(QPaintEvent *event) final override {
-	//fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	//DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
 	O::paintEvent(event);
     };
     virtual void qPaintEvent(QPaintEvent *event) {
-	// fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	// DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
         Q::paintEvent(event);
     }
     virtual QSize sizeHint() const final override {

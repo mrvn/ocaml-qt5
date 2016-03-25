@@ -6,8 +6,6 @@
 #define MRVN_QT5_OCOLOR_H
 #define MRVN_QT5_OCOLOR_H__INSIDE
 
-#include <utility>
-
 #include "OClass.h"
 
 class QColor;

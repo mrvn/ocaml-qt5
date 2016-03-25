@@ -6,6 +6,9 @@
 #define MRVN_QT5_OLCDNUMBER_H
 #define MRVN_QT5_OLCDNUMBER_H__INSIDE
 
+#include <utility>
+
+#include "debug.h"
 #include "OFrame.h"
 
 class OLCDNumber : public OFrame {
@@ -19,10 +22,10 @@ class TLCDNumber : public TFrame<O, Q> {
 public:
     template<typename ... A>
     TLCDNumber(int numDigits, A && ... a) : TFrame<O, Q>(numDigits, std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TLCDNumber() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

@@ -142,10 +142,7 @@ object(self)
     end
 
   method paintEvent event =
-    Printf.printf "tetrixBoard.paintEvent\n";
     self#qPaintEvent event;
-    (* Gc.full_major (); *)
-    Printf.printf "### painter\n%!";
     let painter = new OPainter.qPainter () in
     assert (painter#begin_ self);
     begin
@@ -199,31 +196,17 @@ object(self)
       | _                   -> self#qKeyPressEvent event
 
   method timerEvent event =
-    Printf.printf "TetrixBoard#timerEvent\n%!";
     if event#timerId == timer#timerId
     then
-      begin
-        Printf.printf "TetrixBoard#timerEvent: ==\n%!";
-        if isWaitingAfterLine
-        then
-          begin
-            Printf.printf "TetrixBoard#timerEvent: isWaitingAfterLine\n%!";
-            isWaitingAfterLine <- false;
-            self#newPiece;
-            timer#start self#timeoutTime self;
-          end
-        else
-          begin
-            Printf.printf "TetrixBoard#timerEvent: oneLineDown\n%!";
-          self#oneLineDown
-          end
-      end
-    else
-      begin
-        Printf.printf "TetrixBoard#timerEvent: not my event\n%!";
-        self#qTimerEvent event;
-      end;
-    Printf.printf "TetrixBoard#timerEvent done\n%!";
+      if isWaitingAfterLine
+      then
+        begin
+          isWaitingAfterLine <- false;
+          self#newPiece;
+          timer#start self#timeoutTime self;
+        end
+      else self#oneLineDown
+    else self#qTimerEvent event
 
   method dropDown =
     let rec loop dropHeight = function
@@ -238,12 +221,10 @@ object(self)
     self#pieceDropped dropHeight
 
   method oneLineDown =
-    Printf.printf "TetrixBoard#oneLineDown\n%!";
     if not (self#tryMove curPiece curX (curY - 1))
     then self#pieceDropped 0
 
   method pieceDropped dropHeight =
-    Printf.printf "TetrixBoard#pieceDropped %d\n%!" dropHeight;
     for i = 0 to 3 do
       let (x, y) = TetrixPiece.xy curPiece i in
       let (x, y) = (curX + x, curY - y)
@@ -264,8 +245,7 @@ object(self)
     self#removeFullLines;
 
     if not isWaitingAfterLine
-    then self#newPiece;
-    Printf.printf "TetrixBoard#pieceDropped done\n%!"
+    then self#newPiece
 
   method removeFullLines =
     let numFullLines = ref 0
@@ -315,8 +295,6 @@ object(self)
     in
     curX <- boardWidth / 2 + 1;
     curY <- boardHeight - 1 + minY;
-    Printf.printf "### newPiece: curY %d = %d - 1 + %d\n%!"
-      curY boardHeight minY;
       
     if not (self#tryMove curPiece curX curY)
     then begin
@@ -333,8 +311,6 @@ object(self)
     let pixmap =
       new QT5.OPixmap.qPixmap (dx * self#squareWidth) (dy * self#squareHeight)
     in
-    Gc.full_major ();
-    Printf.printf "### painter\n%!";
     let painter = new QT5.OPainter.qPainter () in
     assert (painter#begin_ pixmap);
     begin
@@ -345,7 +321,6 @@ object(self)
         let (x, y) = TetrixPiece.xy nextPiece i in
         let (x, y) = (x - mx, y - my)
         in
-        Printf.printf "### drawSquare %d %d\n%!" x y;
         self#drawSquare
           painter
           (x * self#squareWidth)
@@ -378,7 +353,6 @@ object(self)
     loop 0
 
   method drawSquare painter x y color =
-    Printf.printf "### drawSquare %d %d\n%!" x y;
     painter#fillRectXYWH
       (x + 1)
       (y + 1)

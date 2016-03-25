@@ -2,25 +2,24 @@
 #include <QWidget>
 
 #include "OGridLayout.h"
-#include "Signal.h"
 
-#include <stdio.h>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <cassert>
 
 #include "OWidget.h"
+#include "Signal.h"
 
 OGridLayout::OGridLayout() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    DEBUG("%p->%s\n", this, __PRETTY_FUNCTION__);
 }
 
 OGridLayout::~OGridLayout() {
-    fprintf(stderr, "%p->%s\n", this, __PRETTY_FUNCTION__);
+    DEBUG("%p->%s\n", this, __PRETTY_FUNCTION__);
 }
 
 void OGridLayout::addWidgetAt(OWidget *widget, int row, int column, int rowSpan, int columnSpan) {
-    fprintf(stderr, "%p->%s(%p, %d, %d, %d, %d)\n", this, __PRETTY_FUNCTION__, widget, row, column, rowSpan, columnSpan);
+    DEBUG("%p->%s(%p, %d, %d, %d, %d)\n", this, __PRETTY_FUNCTION__, widget, row, column, rowSpan, columnSpan);
     widget->incr();
     QGridLayout *layout = dynamic_cast<QGridLayout *>(this);
     assert((layout != nullptr) && "OGridLayout not mixed with QGridLayout");
@@ -34,7 +33,7 @@ void OGridLayout::addWidgetAt(OWidget *widget, int row, int column, int rowSpan,
 }
 
 extern "C" value caml_mrvn_QT5_OGridLayout_make(void) {
-    fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+    DEBUG("%s()\n", __PRETTY_FUNCTION__);
     OQGridLayout *obj = new OQGridLayout();
     assert(obj != nullptr);
     return value(static_cast<OClass *>(obj));
@@ -42,7 +41,7 @@ extern "C" value caml_mrvn_QT5_OGridLayout_make(void) {
 
 extern "C" value caml_mrvn_QT5_OGridLayout_addWidgetAt(OClass *obj, OClass *widget, value at) {
     CAMLparam1(at);
-    fprintf(stderr, "%s(%p, %p)\n", __PRETTY_FUNCTION__, obj, widget);
+    DEBUG("%s(%p, %p)\n", __PRETTY_FUNCTION__, obj, widget);
     OGridLayout *layout = dynamic_cast<OGridLayout *>(obj);
     assert((layout != nullptr) && "not mixed with OGridLayout");
     OWidget *w = dynamic_cast<OWidget *>(widget);

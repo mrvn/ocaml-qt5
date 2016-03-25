@@ -8,6 +8,9 @@
 
 #include <QSize>
 
+#include <utility>
+
+#include "debug.h"
 #include "OClass.h"
 #include "OPaintDevice.h"
 
@@ -22,10 +25,10 @@ class TPixmap : public TClass<O, Q> {
 public:
     template<typename ... A>
     TPixmap(int width, int height, A && ... a) : TClass<O, Q>(width, height, std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TPixmap() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

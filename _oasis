@@ -1,6 +1,6 @@
 OASISFormat: 0.4
 Name: ocaml-qt5
-Version: 0.0
+Version: 1.0
 Synopsis: ocaml bindings for QT5 widgets
 Description: ocaml bindings to QT5 widgets
 Authors: Goswin von Brederlow <goswin-v-b@web.de>
@@ -40,7 +40,7 @@ Library QT5
     src/OSize,           src/OPalette,    src/OWidget_OLayout, src/OLayout,     src/OWidget,         src/OMainWindow,
     src/OAbstractButton, src/OPushButton, src/OFrame,          src/OLabel,      src/OGridLayout,     src/OLCDNumber
   CSources:
-    src/caml_weak.h,
+    src/caml_weak.h,       src/debug.h,
     src/OClass.h,          src/OClass_stubs.c,             src/Connection.h,      src/Connection_stubs.c,
     src/Signal.h,          src/Signal_stubs.c,             src/OColor.h,          src/OColor_stubs.c,
     src/OEvent.h,          src/OEvent_stubs.c,             src/OTimerEvent.h,     src/OTimerEvent_stubs.c,

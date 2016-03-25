@@ -13,9 +13,6 @@ class oLabel obj = object(self)
     in
     E.stub self#as_oLabel#obj align
   method setPixmap : 'a . (<as_oPixmap : OPixmap.oPixmap; ..> as 'a) -> unit = fun pixmap ->
-(*
-  method setPixmap : OPixmap.oPixmap -> unit = fun pixmap ->
-*)
     let module E = (val (module struct
       type e = oLabel OClass.t -> OPixmap.t -> unit
       external stub : oLabel OClass.t -> OPixmap.t -> unit = "caml_mrvn_QT5_OLabel_setPixmap"

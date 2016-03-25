@@ -6,6 +6,9 @@
 #define MRVN_QT5_OOBJECT_H
 #define MRVN_QT5_OOBJECT_H__INSIDE
 
+#include <utility>
+
+#include "debug.h"
 #include "OClass.h"
 
 class QObject;
@@ -27,10 +30,10 @@ class TObject : public TClass<O, Q> {
 public:
     template<typename ... A>
     TObject(A && ... a) : TClass<O, Q>(std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TObject() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual bool event(QEvent *event) final override {
 	if (O::event(event)) {

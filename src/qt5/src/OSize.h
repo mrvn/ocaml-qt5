@@ -6,8 +6,6 @@
 #define MRVN_QT5_OSIZE_H
 #define MRVN_QT5_OSIZE_H__INSIDE
 
-#include <utility>
-
 #include "OClass.h"
 
 class QSize;

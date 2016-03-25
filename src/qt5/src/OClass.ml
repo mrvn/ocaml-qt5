@@ -9,10 +9,10 @@ external register : 'a t -> 'a Weak.t -> unit = "caml_mrvn_Qt5_OClass_register_o
 external unregister : 'a t -> unit = "caml_mrvn_Qt5_OClass_unregister_obj"
 
 let finalise_helper oClass =
-  Printf.printf "OClass.finalise_helper\n%!";
+  (* Printf.printf "OClass.finalise_helper\n%!"; *)
   try
     unregister oClass#obj;
-  with Destroyed -> (* unused at the moment, assertion in OClass::~OClass() *)
+  with Destroyed ->
     Printf.printf "OClass.finalise_helper: Destroyed\n%!";
     ()
 

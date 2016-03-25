@@ -6,6 +6,7 @@
 #define MRVN_QT5_OPUSHBUTTON_H
 #define MRVN_QT5_OPUSHBUTTON_H__INSIDE
 
+#include "debug.h"
 #include "OAbstractButton.h"
 
 class OPushButton : public virtual OAbstractButton {
@@ -19,10 +20,10 @@ class TPushButton : public TAbstractButton<O, Q> {
 public:
     template<typename ... A>
     TPushButton(QString text, A && ... a) : TAbstractButton<O, Q>(text, std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TPushButton() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

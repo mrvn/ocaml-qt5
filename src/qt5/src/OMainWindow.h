@@ -6,6 +6,9 @@
 #define MRVN_QT5_OMAINWINDOW_H
 #define MRVN_QT5_OMAINWINDOW_H__INSIDE
 
+#include <utility>
+
+#include "debug.h"
 #include "OWidget.h"
 
 class OMainWindow : public virtual OWidget {
@@ -23,10 +26,10 @@ class TMainWindow : public TWidget<O, Q> {
 public:
     template<typename ... A>
     TMainWindow(A && ... a) : TWidget<O, Q>(std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TMainWindow() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

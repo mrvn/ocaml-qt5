@@ -2,7 +2,6 @@
 
 #include "OPainter.h"
 
-#include <stdio.h>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <cassert>
@@ -10,16 +9,16 @@
 #include "OPaintDevice.h"
 
 OPainter::OPainter() : device_(nullptr) {
-    fprintf(stderr, "%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
+    DEBUG("%p [0x%lx]->%s\n", this, maybe_obj(), __PRETTY_FUNCTION__);
 }
 
 OPainter::~OPainter() {
-    fprintf(stderr, "%p [0x%lx]->%s: device = %p\n", this, maybe_obj(), __PRETTY_FUNCTION__, device_);
+    DEBUG("%p [0x%lx]->%s: device = %p\n", this, maybe_obj(), __PRETTY_FUNCTION__, device_);
     assert((device_ == nullptr) && "forgot to cal end()");
 }
 
 bool OPainter::begin(OPaintDevice *device) {
-    fprintf(stderr, "%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, device);
+    DEBUG("%p [0x%lx]->%s(%p)\n", this, maybe_obj(), __PRETTY_FUNCTION__, device);
     assert((device_ == nullptr) && "already have a device");
     device_ = device;
     device_->registerPainter(this);
@@ -32,7 +31,7 @@ bool OPainter::begin(OPaintDevice *device) {
 
 
 void OPainter::end() {
-    fprintf(stderr, "%p [0x%lx]->%s: device = %p\n", this, maybe_obj(), __PRETTY_FUNCTION__, device_);
+    DEBUG("%p [0x%lx]->%s: device = %p\n", this, maybe_obj(), __PRETTY_FUNCTION__, device_);
     assert((device_ != nullptr) && "don't have a device");
     QPainter *painter = dynamic_cast<QPainter *>(this);
     assert((painter != nullptr) && "OPainter not mixed with QPainter");
@@ -43,7 +42,7 @@ void OPainter::end() {
 
 extern "C" value caml_mrvn_QT5_OPainter_make() {
     CAMLparam0();
-    fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+    DEBUG("%s()\n", __PRETTY_FUNCTION__);
     OQPainter *obj = new OQPainter();
     assert(obj != nullptr);
     CAMLreturn(value(static_cast<OClass *>(obj)));
@@ -51,7 +50,7 @@ extern "C" value caml_mrvn_QT5_OPainter_make() {
 
 extern "C" value caml_mrvn_QT5_OPainter_drawText(OClass *obj, OClass *rect, value ml_align, value ml_text) {
     CAMLparam2(ml_align, ml_text);
-    fprintf(stderr, "%s(%p, %p, %d, '%s')\n", __PRETTY_FUNCTION__, obj, rect, Int_val(ml_align), String_val(ml_text));
+    DEBUG("%s(%p, %p, %d, '%s')\n", __PRETTY_FUNCTION__, obj, rect, Int_val(ml_align), String_val(ml_text));
     QPainter *painter = dynamic_cast<QPainter *>(obj);
     assert((painter != nullptr) && "OPainter not mixed with QPainter");
     QRect *r = dynamic_cast<QRect *>(rect);
@@ -62,7 +61,7 @@ extern "C" value caml_mrvn_QT5_OPainter_drawText(OClass *obj, OClass *rect, valu
 
 extern "C" value caml_mrvn_QT5_OPainter_fillRect(OClass *obj, OClass *rect, OClass *color) {
     CAMLparam0();
-    fprintf(stderr, "%s(%p, %p, %p)\n", __PRETTY_FUNCTION__, obj, rect, color);
+    DEBUG("%s(%p, %p, %p)\n", __PRETTY_FUNCTION__, obj, rect, color);
     QPainter *painter = dynamic_cast<QPainter *>(obj);
     assert((painter != nullptr) && "OPainter not mixed with QPainter");
     QRect *r = dynamic_cast<QRect *>(rect);
@@ -75,7 +74,7 @@ extern "C" value caml_mrvn_QT5_OPainter_fillRect(OClass *obj, OClass *rect, OCla
 
 extern "C" value caml_mrvn_QT5_OPainter_setPenColor(OClass *obj, OClass *color) {
     CAMLparam0();
-    fprintf(stderr, "%s(%p, %p)\n", __PRETTY_FUNCTION__, obj, color);
+    DEBUG("%s(%p, %p)\n", __PRETTY_FUNCTION__, obj, color);
     QPainter *painter = dynamic_cast<QPainter *>(obj);
     assert((painter != nullptr) && "OPainter not mixed with QPainter");
     QColor *c = dynamic_cast<QColor *>(color);
@@ -85,7 +84,7 @@ extern "C" value caml_mrvn_QT5_OPainter_setPenColor(OClass *obj, OClass *color) 
 
 extern "C" value caml_mrvn_QT5_OPainter_drawLine(OClass *obj, value ml_x1, value ml_y1, value ml_x2, value ml_y2) {
     CAMLparam4(ml_x1, ml_y1, ml_x2, ml_y2);
-    fprintf(stderr, "%s(%p, %d, %d, %d, %d)\n", __PRETTY_FUNCTION__, obj, Int_val(ml_x1), Int_val(ml_y1), Int_val(ml_x2), Int_val(ml_y2));
+    DEBUG("%s(%p, %d, %d, %d, %d)\n", __PRETTY_FUNCTION__, obj, Int_val(ml_x1), Int_val(ml_y1), Int_val(ml_x2), Int_val(ml_y2));
     QPainter *painter = dynamic_cast<QPainter *>(obj);
     assert((painter != nullptr) && "OPainter not mixed with QPainter");
     painter->drawLine(Int_val(ml_x1), Int_val(ml_y1), Int_val(ml_x2), Int_val(ml_y2));
@@ -94,7 +93,7 @@ extern "C" value caml_mrvn_QT5_OPainter_drawLine(OClass *obj, value ml_x1, value
 
 extern "C" value caml_mrvn_QT5_OPainter_begin(OClass *obj, OClass *device) {
     CAMLparam0();
-    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    DEBUG("%s(%p)\n", __PRETTY_FUNCTION__, obj);
     OPainter *painter = dynamic_cast<OPainter *>(obj);
     assert((painter != nullptr) && "not an OPainter");
     OPaintDevice *dev = dynamic_cast<OPaintDevice *>(device);
@@ -104,7 +103,7 @@ extern "C" value caml_mrvn_QT5_OPainter_begin(OClass *obj, OClass *device) {
 
 extern "C" value caml_mrvn_QT5_OPainter_end(OClass *obj) {
     CAMLparam0();
-    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    DEBUG("%s(%p)\n", __PRETTY_FUNCTION__, obj);
     OPainter *painter = dynamic_cast<OPainter *>(obj);
     assert((painter != nullptr) && "not an OPainter");
     painter->end();

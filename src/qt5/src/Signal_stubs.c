@@ -27,25 +27,25 @@ struct custom_operations caml_mrvn_QT5_Signal_custom_ops = {
 extern "C"
 value caml_mrvn_QT5_Signal_connect(OClass *obj, SignalBase * signal, value ml_fn) {
     CAMLparam1(ml_fn);
-    fprintf(stderr, "%s(obj = %p, signal = %p, ml_fn = 0x%lx)\n",
+    DEBUG("%s(obj = %p, signal = %p, ml_fn = 0x%lx)\n",
 	    __PRETTY_FUNCTION__, obj, signal, ml_fn);
     QObject * qObj = dynamic_cast<QObject *>(obj);
     assert((qObj != nullptr) && "OObject not mixed with QObject");
-    fprintf(stderr, "%s: qObj = %p\n", __PRETTY_FUNCTION__, qObj);
+    DEBUG("%s: qObj = %p\n", __PRETTY_FUNCTION__, qObj);
     QMetaObject::Connection con(signal->connect(qObj, ml_fn));
-    fprintf(stderr, "%s: got con\n", __PRETTY_FUNCTION__);
+    DEBUG("%s: got con\n", __PRETTY_FUNCTION__);
     CAMLreturn(Connection::make(con));
 }
 
 value call2(value closure, bool arg) {
     CAMLparam1(closure);
     CAMLlocal1(res);
-    fprintf(stderr, "%s(closure = 0x%lx, arg = %s)\n", __PRETTY_FUNCTION__, closure, arg ? "true" : "false");
+    DEBUG("%s(closure = 0x%lx, arg = %s)\n", __PRETTY_FUNCTION__, closure, arg ? "true" : "false");
     res = caml_callback_exn(closure, Val_bool(arg));
-    fprintf(stderr, "%s: res = 0x%lx\n", __PRETTY_FUNCTION__, res);
+    DEBUG("%s: res = 0x%lx\n", __PRETTY_FUNCTION__, res);
     if (Is_exception_result(res)) {
         res = Extract_exception(res);
-	fprintf(stderr, "%s: callback got exception 0x%ld\n", __PRETTY_FUNCTION__, res);
+	DEBUG("%s: callback got exception 0x%ld\n", __PRETTY_FUNCTION__, res);
     }
     CAMLreturn(Val_unit);
 }

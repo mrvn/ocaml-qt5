@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "debug.h"
 #include "OClass.h"
 
 class QPainter;
@@ -28,10 +29,10 @@ class TPainter : public virtual O, public Q {
 public:
     template<typename ... A>
     TPainter(A && ... a) : O(), Q(std::forward<A>(a) ...) {
-	fprintf(stderr, "%p [0x%lx]->%s()\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s()\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
     virtual ~TPainter() {
-	fprintf(stderr, "%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
+	DEBUG("%p [0x%lx]->%s\n", this, O::maybe_obj(), __PRETTY_FUNCTION__);
     }
 };
 

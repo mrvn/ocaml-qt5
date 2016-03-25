@@ -6,27 +6,28 @@
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <caml/alloc.h>
-#include <stdio.h>
+
+#include "debug.h"
 
 char caml_mrvn_QT5_Connection_identifier[] = "mrvn.caml.QT5.Connection";
 
 Connection::Connection(const QMetaObject::Connection &con)
   : QMetaObject::Connection(con) {
-  fprintf(stderr, "%p->%s()\n", this, __PRETTY_FUNCTION__);
+  DEBUG("%p->%s()\n", this, __PRETTY_FUNCTION__);
 }
 
 Connection::~Connection() {
-  fprintf(stderr, "%p->%s()\n", this, __PRETTY_FUNCTION__);
+  DEBUG("%p->%s()\n", this, __PRETTY_FUNCTION__);
 }
 
 void Connection::disconnect() {
-  fprintf(stderr, "%p->%s()\n", this, __PRETTY_FUNCTION__);
+  DEBUG("%p->%s()\n", this, __PRETTY_FUNCTION__);
   QObject::disconnect(*this);
 }
 
 static void connection_finalize(value v) {
   Connection *con = (Connection *)Data_custom_val(v);
-  fprintf(stderr, "%s(): Connection @ %p\n", __PRETTY_FUNCTION__, con);
+  DEBUG("%s(): Connection @ %p\n", __PRETTY_FUNCTION__, con);
   con->~Connection();
 }
 
@@ -43,7 +44,7 @@ struct custom_operations caml_mrvn_QT5_Connection_custom_ops = {
 value Connection::make(const QMetaObject::Connection &con) {
     CAMLparam0();
     CAMLlocal1(res);
-    fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+    DEBUG("%s()\n", __PRETTY_FUNCTION__);
     res = caml_alloc_custom(&caml_mrvn_QT5_Connection_custom_ops, sizeof(Connection), 1, sizeof(Connection));
     new(Data_custom_val(res))Connection(con);
     CAMLreturn(res);

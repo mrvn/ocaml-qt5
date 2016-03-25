@@ -41,8 +41,6 @@
 
 open QT5
 
-let foo _ = Printf.printf "start callback\n%!"
-
 class tetrixWindow () =
   let nextPieceLabel =
     let label = new OLabel.qLabel ()
@@ -67,8 +65,8 @@ object(self)
     startButton#setFocusPolicy Qt.NoFocus;
     quitButton#setFocusPolicy  Qt.NoFocus;
     pauseButton#setFocusPolicy Qt.NoFocus;
-    let _ = startButton#clicked#connect (fun _ -> Printf.printf "start callback\n%!"; board#start) in
-    let _ = pauseButton#clicked#connect (fun _ -> Printf.printf "pause callback\n%!"; board#pause)
+    let _ = startButton#clicked#connect (fun _ -> board#start) in
+    let _ = pauseButton#clicked#connect (fun _ -> board#pause)
     in
     board#scoreChanged#connect scoreLcd#display;
     board#levelChanged#connect levelLcd#display;
