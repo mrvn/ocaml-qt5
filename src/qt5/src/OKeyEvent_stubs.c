@@ -20,3 +20,12 @@ QKeyEvent * OKeyEvent::event() const {
     fprintf(stderr, "%s: %p\n", __PRETTY_FUNCTION__, e);
     return e;
 }
+
+extern "C" value caml_mrvn_QT5_OKeyEvent_key(OClass *obj) {
+    CAMLparam0();
+    fprintf(stderr, "%s(%p)\n", __PRETTY_FUNCTION__, obj);
+    OKeyEvent *keyEvent = dynamic_cast<OKeyEvent *>(obj);
+    assert((keyEvent != nullptr) && "not an OKeyEvent");
+    QKeyEvent *event = keyEvent->event();
+    CAMLreturn(Val_int(event->key()));
+}

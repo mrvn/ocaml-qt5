@@ -186,37 +186,18 @@ object(self)
     painter#end_
 
   method keyPressEvent event =
-    self#qKeyPressEvent event
-(*
-    if (!isStarted || isPaused || curPiece.shape() == NoShape) {
-        QFrame::keyPressEvent(event);
-        return;
-    }
+    if not isStarted || isPaused || (curPiece == TetrixPiece.noShape)
+    then self#qKeyPressEvent event
+    else
+      match event#key with
+      | QT5.OKeyEvent.Left  -> ignore (self#tryMove curPiece (curX - 1) curY)
+      | QT5.OKeyEvent.Right -> ignore (self#tryMove curPiece (curX + 1) curY)
+      | QT5.OKeyEvent.Down  -> ignore (self#tryMove (TetrixPiece.rotatedRight curPiece) curX curY)
+      | QT5.OKeyEvent.Up    -> ignore (self#tryMove (TetrixPiece.rotatedLeft curPiece) curX curY)
+      | QT5.OKeyEvent.Space -> self#dropDown
+      | QT5.OKeyEvent.D     -> self#oneLineDown
+      | _                   -> self#qKeyPressEvent event
 
-    switch (event->key()) {
-    case Qt::Key_Left:
-        tryMove(curPiece, curX - 1, curY);
-        break;
-    case Qt::Key_Right:
-        tryMove(curPiece, curX + 1, curY);
-        break;
-    case Qt::Key_Down:
-        tryMove(curPiece.rotatedRight(), curX, curY);
-        break;
-    case Qt::Key_Up:
-        tryMove(curPiece.rotatedLeft(), curX, curY);
-        break;
-    case Qt::Key_Space:
-        dropDown();
-        break;
-    case Qt::Key_D:
-        oneLineDown();
-        break;
-    default:
-        QFrame::keyPressEvent(event);
-    }
-}
-*)
   method timerEvent event =
     Printf.printf "TetrixBoard#timerEvent\n%!";
     if event#timerId == timer#timerId
