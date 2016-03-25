@@ -55,7 +55,7 @@ Library QT5
     src/OAbstractButton.h, src/OAbstractButton_stubs.c,    src/OPushButton.h,     src/OPushButton_stubs.c,
     src/OFrame.h,          src/OFrame_stubs.c,             src/OLabel.h,          src/OLabel_stubs.c,
     src/OGridLayout.h,     src/OGridLayout_stubs.c,        src/OLCDNumber.h,      src/OLCDNumber_stubs.c
-  CCOpt: `pkg-config --cflags Qt5Widgets` -x c++ -std=gnu++11 -Wno-pmf-conversions -O2 -W -Wall -fno-inline
+  CCOpt: `pkg-config --cflags Qt5Widgets` -x c++ -std=gnu++11 -Wno-pmf-conversions -O2 -W -Wall -fno-inline `if $debug; then printf -- "-DDEBUG=DEBUG"; fi`
 #  `pkg-config --libs Qt5Widgets`
   CCLib: -lQt5Widgets -lQt5Gui -lQt5Core -lstdc++
   FindlibName: QT5
